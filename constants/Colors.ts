@@ -9,12 +9,12 @@ export default {
 
     primaryColourLight: "#E6D6F8",
     primaryColour: "#A85DFD",
-    secondaryColour: "##EA9093",
+    secondaryColour: "#EA9093",
     secondaryColourLight: "#E8BBBE",
     tint: tintColorLight,
     tabIconDefault: "#ccc",
     tabIconSelected: tintColorLight,
-
+    messageColourLight: "#7285E5",
     success: "#00cc00",
     primary: "#007aff",
     secondary: "#ff9500",
@@ -30,7 +30,7 @@ export default {
     text: "#fff",
     overLay: "#000",
     background: "#000",
-
+    messageColourLight: "#7285E5",
     primaryColourLight: "#E6D6F8",
     primaryColour: "#A85DFD",
     secondaryColour: "##EA9093",

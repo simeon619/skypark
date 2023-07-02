@@ -2,6 +2,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
+
 import {
   ImageBackground,
   TouchableOpacity,

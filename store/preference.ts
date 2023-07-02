@@ -63,7 +63,7 @@ interface Icon {
   name: string;
 }
 
-type IconName = (typeof icons)[number]["name"];
+export type IconName = (typeof icons)[number]["name"];
 
 export const typeform: IconName = "Client";
 
@@ -83,3 +83,26 @@ export const useTypeForm = create<stateForm, any>(
     { name: "formType", storage: createJSONStorage(() => AsyncStorage) }
   )
 );
+
+//////////////////////////////////////////////////////////////// ViewerParamImages ********************************
+type ImageSchemaForm = {
+  images: {
+    uri: string;
+  }[];
+  actualIndex: number;
+};
+
+type ViewerParamImages = {
+  data: ImageSchemaForm;
+
+  setParmsImagesForm: (value: ImageSchemaForm) => void;
+};
+
+export const useViewerParamImages = create<ViewerParamImages>((set, get) => ({
+  data: { actualIndex: 0, images: [] },
+  setParmsImagesForm: (value: ImageSchemaForm) => {
+    if (JSON.stringify(value) !== JSON.stringify(get().data)) {
+      set(() => ({ data: value }));
+    }
+  },
+}));

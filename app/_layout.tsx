@@ -23,14 +23,16 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
+import { MenuProvider } from "react-native-popup-menu";
+
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
 import { useColorScheme } from "react-native";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 export { ErrorBoundary } from "expo-router";
 
 export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
   initialRouteName: "(tabs)",
 };
 
@@ -80,18 +82,61 @@ function RootLayoutNav() {
   return (
     <>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-          <Stack.Screen
-            name="profile/index"
-            options={{
-              presentation: "modal",
-              headerShown: false,
-              animation: "simple_push",
-            }}
-          />
-        </Stack>
+        <KeyboardProvider>
+          <MenuProvider>
+            <Stack screenOptions={{}}>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen
+                name="modal/FormViewerImage"
+                options={{
+                  presentation: "transparentModal",
+                  headerShown: false,
+                  animation: "fade_from_bottom",
+                  customAnimationOnGesture: true,
+                }}
+              />
+              <Stack.Screen
+                name="profile/index"
+                options={{
+                  presentation: "modal",
+                  headerShown: false,
+                  animation: "simple_push",
+                }}
+              />
+              <Stack.Screen
+                name="register/Login"
+                options={{
+                  headerShown: false,
+                  animation: "simple_push",
+                }}
+              />
+              <Stack.Screen
+                name="register/Signup"
+                options={{
+                  presentation: "card",
+                  headerShown: false,
+                  animation: "simple_push",
+                }}
+              />
+              <Stack.Screen
+                name="modal/discussion"
+                options={{
+                  presentation: "card",
+                  headerShown: false,
+                  animation: "slide_from_right",
+                }}
+              />
+              <Stack.Screen
+                name="settings/CheckProfile"
+                options={{
+                  presentation: "card",
+                  headerShown: false,
+                  animation: "simple_push",
+                }}
+              />
+            </Stack>
+          </MenuProvider>
+        </KeyboardProvider>
       </ThemeProvider>
     </>
   );

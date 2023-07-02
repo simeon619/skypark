@@ -49,6 +49,7 @@ const ImageRatio = ({
         aspectRatio: aspectRatio !== null ? aspectRatio : 2 / 3,
       }}
       onLoad={handleImageLoad}
+      transition={150}
     />
   );
 };
