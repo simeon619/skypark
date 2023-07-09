@@ -9,4 +9,4 @@ const Call = () => {
   );
 };
 
-export default Call;
+export default React.memo(Call);

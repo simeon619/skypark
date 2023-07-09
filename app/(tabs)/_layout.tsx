@@ -12,7 +12,6 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: "#fff",
         headerShown: false,
-        tabBarHideOnKeyboard: true,
         // headerTransparent: true,
         tabBarStyle: { ...shadow(90), height: verticalScale(65) },
         tabBarActiveBackgroundColor: primaryColourLight,
@@ -20,7 +19,6 @@ export default function TabLayout() {
       tabBar={(props) => (
         <BottomFabBar
           mode={"default"}
-          // insets={EdgeInsets.bottom}
           focusedButtonStyle={{ ...shadow(90) }}
           bottomBarContainerStyle={[
             {

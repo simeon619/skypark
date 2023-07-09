@@ -25,18 +25,20 @@ const createButton = ({
       onPress={onPress}
       style={{
         alignSelf: "center",
-        backgroundColor: Colors[colorScheme ?? "light"].primaryColourLight,
+        backgroundColor: Colors[colorScheme ?? "light"].primaryColour,
         paddingVertical: verticalScale(5),
         paddingHorizontal: horizontalScale(30),
         borderRadius: 20,
         marginTop: verticalScale(25),
+
         ...style,
       }}
     >
       <TextRegular
         style={{
-          fontSize: moderateScale(18),
+          fontSize: moderateScale(15),
           color: Colors[colorScheme ?? "light"].overLay,
+          textTransform: "capitalize",
         }}
       >
         {value}

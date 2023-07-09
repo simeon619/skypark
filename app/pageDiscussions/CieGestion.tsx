@@ -9,4 +9,4 @@ const CieGestion = () => {
   );
 };
 
-export default CieGestion;
+export default React.memo(CieGestion);

@@ -1,24 +1,22 @@
-import { FlashList } from "@shopify/flash-list";
-import { Audio } from "expo-av";
-import * as FileSystem from "expo-file-system";
-import * as ImagePicker from "expo-image-picker";
-import { useRouter, useSearchParams } from "expo-router";
-import React, {
-  memo,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { FlashList } from '@shopify/flash-list';
+import { Audio } from 'expo-av';
+import * as FileSystem from 'expo-file-system';
+import { Image } from 'expo-image';
+import * as ImagePicker from 'expo-image-picker';
+import { useGlobalSearchParams, useRouter } from 'expo-router';
+import React, { memo, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import {
   Alert,
   TextInput,
   TouchableOpacity,
-  View as ViewNatif,
   useColorScheme,
   useWindowDimensions,
-} from "react-native";
+  View as ViewNatif,
+} from 'react-native';
+import { PanGestureHandler } from 'react-native-gesture-handler';
+import { AndroidSoftInputModes, KeyboardController } from 'react-native-keyboard-controller';
 import Animated, {
   runOnJS,
   useAnimatedGestureHandler,
@@ -26,27 +24,14 @@ import Animated, {
   useSharedValue,
   withSpring,
   withTiming,
-} from "react-native-reanimated";
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { Image } from "expo-image";
-import { PanGestureHandler } from "react-native-gesture-handler";
-import {
-  AndroidSoftInputModes,
-  KeyboardController,
-} from "react-native-keyboard-controller";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { formatMessageDate } from "../../Utilis/date";
-import { useTelegramTransitions } from "../../Utilis/hooksKeyboard";
-import {
-  horizontalScale,
-  moderateScale,
-  verticalScale,
-} from "../../Utilis/metrics";
-import { TextRegular, TextRegularItalic } from "../../components/StyledText";
-import { View } from "../../components/Themed";
-import Colors from "../../constants/Colors";
-import { Message } from "../../types/messageType";
+} from 'react-native-reanimated';
+import { formatMessageDate } from '../../Utilis/date';
+import { useTelegramTransitions } from '../../Utilis/hooksKeyboard';
+import { horizontalScale, moderateScale, verticalScale } from '../../Utilis/metrics';
+import { TextRegular, TextRegularItalic } from '../../components/StyledText';
+import { View } from '../../components/Themed';
+import Colors from '../../constants/Colors';
+import { Message } from '../../types/messageType';
 
 const TRESHOLD_SLIDE = 100;
 
@@ -54,11 +39,9 @@ const discussion = () => {
   const inputRef = useRef<TextInput>(null);
   const colorSheme = useColorScheme();
   const { width } = useWindowDimensions();
-  const [text, setText] = useState("");
+  const [text, setText] = useState('');
   useEffect(() => {
-    KeyboardController.setInputMode(
-      AndroidSoftInputModes.SOFT_INPUT_ADJUST_RESIZE
-    );
+    KeyboardController.setInputMode(AndroidSoftInputModes.SOFT_INPUT_ADJUST_RESIZE);
     return () => {
       KeyboardController.setDefaultMode();
     };
@@ -69,37 +52,33 @@ const discussion = () => {
   const [duration, setDuration] = useState(0);
   const [args, setArgs] = useState(0);
   const {
-    control, 
-    handleSubmit, 
-    formState: {errors, isValid}
-  } = useForm<TextInput>({mode: 'onBlur'})
-  const [pathVoiceNote, setPathVoiceNote] = useState<string | null | undefined>(
-    ""
-  );
+    control,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm<TextInput>({ mode: 'onBlur' });
+  const [pathVoiceNote, setPathVoiceNote] = useState<string | null | undefined>('');
   const route = useRouter();
 
-  const params = useSearchParams();
+  const params = useGlobalSearchParams();
   const [recording, setRecording] = useState<Audio.Recording>();
 
   const regex = new RegExp(/[^\s\r\n]/g);
 
   async function startRecording() {
     try {
-      console.log("Requesting permissions..");
+      console.log('Requesting permissions..');
       await Audio.requestPermissionsAsync();
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
       });
-      const { recording, status } = await Audio.Recording.createAsync(
-        Audio.RecordingOptionsPresets.HIGH_QUALITY
-      );
+      const { recording, status } = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
       recording.setOnRecordingStatusUpdate((T) => {
         setDuration(T.durationMillis);
       });
       setRecording(recording);
     } catch (err) {
-      console.error("Failed to start recording", err);
+      console.error('Failed to start recording', err);
     }
   }
 
@@ -108,19 +87,16 @@ const discussion = () => {
       stopRecording();
     }
   }, [args]);
-  const stopRecording = async () => {
+
+  const stopRecording = useCallback(async () => {
     const status = await recording?.getStatusAsync();
-    console.log("Stopping recording..", status);
+    console.log('Stopping recording..', status);
 
     if (recording && status?.isRecording) {
       try {
         await recording.stopAndUnloadAsync();
       } catch (error: any) {
-        if (
-          error.message.includes(
-            "Stop encountered an error: recording not stopped"
-          )
-        ) {
+        if (error.message.includes('Stop encountered an error: recording not stopped')) {
           await recording._cleanupForUnloadedRecorder({
             canRecord: false,
             durationMillis: 0,
@@ -129,22 +105,18 @@ const discussion = () => {
           });
           console.log(`recorderStop() error : ${error}`);
         } else if (
-          error.message.includes(
-            "Cannot unload a Recording that has already been unloaded."
-          ) ||
-          error.message.includes(
-            "Error: Cannot unload a Recording that has not been prepared."
-          )
+          error.message.includes('Cannot unload a Recording that has already been unloaded.') ||
+          error.message.includes('Error: Cannot unload a Recording that has not been prepared.')
         ) {
           console.log(`recorderStop() error : ${error}`);
         } else {
           console.error(`recorderStop(): ${error}`);
         }
       }
-      console.log("recorder stopped");
+      console.log('recorder stopped');
       // await recording.de;
     } else {
-      console.log("🚀 ~ file: discussion.tsx:159 ~ stopRecording ~  '':", "");
+      console.log("🚀 ~ file: discussion.tsx:159 ~ stopRecording ~  '':", '');
     }
 
     setRecording(undefined);
@@ -158,13 +130,12 @@ const discussion = () => {
       isDoneRecording: false,
     });
     const uri = recording?.getURI();
-    console.log("Recording stopped and stored at", uri);
-
-    sendAudio(uri);
-  };
-  const sendAudio = async (pathVoiceNote: any) => {
+    console.log('Recording stopped and stored at', uri);
+    if (uri) sendAudio(uri);
+  }, []);
+  const sendAudio = useCallback(async (pathVoiceNote: string) => {
     if (pathVoiceNote) {
-      let name = pathVoiceNote.split("/").pop();
+      let name = pathVoiceNote.split('/').pop();
       // let base64 = await RNFS.readFile(uri, "base64");
       const fileInfo: any = await FileSystem.getInfoAsync(pathVoiceNote, {
         size: true,
@@ -174,12 +145,12 @@ const discussion = () => {
       });
 
       setPathVoiceNote(null);
-      console.log("audio send");
+      console.log('audio send');
     }
     resetAudio();
-  };
+  }, []);
 
-  const chooseImage = async () => {
+  const chooseImage = useCallback(async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       quality: 0.7,
       base64: true,
@@ -194,29 +165,26 @@ const discussion = () => {
           // const fileInfo: any = await FileSystem.getInfoAsync(asset.uri, {
           //   size: true,
           // });
-          let fileName = asset.uri?.split("/").pop();
-          let ext = fileName?.split(".").pop();
-          let type = asset.type === "image" ? `image/${ext}` : "video/" + ext;
+          let fileName = asset.uri?.split('/').pop();
+          let ext = fileName?.split('.').pop();
+          let type = asset.type === 'image' ? `image/${ext}` : 'video/' + ext;
 
           return {
             buffer: asset.base64,
             fileName,
-            encoding: "base64",
+            encoding: 'base64',
             type,
             size: 1500,
           };
         });
     } else {
-      Alert.prompt("You did not select any image.");
+      Alert.prompt('You did not select any image.');
     }
-  };
+  }, []);
 
   const heightAnim = useSharedValue(0);
   const handleContentSizeChange = useCallback((event: any) => {
-    const newHeight = Math.min(
-      Math.max(event.nativeEvent.contentSize.height, 30),
-      verticalScale(110)
-    );
+    const newHeight = Math.min(Math.max(event.nativeEvent.contentSize.height, 30), verticalScale(110));
 
     heightAnim.value = withTiming(newHeight, { duration: 0 });
   }, []);
@@ -277,9 +245,9 @@ const discussion = () => {
         },
       ],
     };
-  });
+  }, []);
 
-  async function resetAudio() {
+  const resetAudio = useCallback(async () => {
     if (recording && (await recording.getStatusAsync()).isRecording) {
       await recording.stopAndUnloadAsync();
       setRecording(undefined);
@@ -289,22 +257,20 @@ const discussion = () => {
         isRecording: false,
         isDoneRecording: false,
       });
-      console.log("reset audio");
+      console.log('reset audio');
     }
-
     setPathVoiceNote(null);
+    console.log('reset');
+  }, []);
 
-    console.log("reset");
-  }
   function formatDuration(durationMillis: number) {
     const totalSeconds = Math.floor(durationMillis / 1000);
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
-    return `${minutes.toString().padStart(2, "0")}:${seconds
-      .toString()
-      .padStart(2, "0")}`;
+    return `${minutes.toString().padStart(2, '0')}:${second.toString().padStart(2, '0')}`;
   }
-  const insets = useSafeAreaInsets();
+
+  // const insets = useSafeAreaInsets();
   const messages = [
     {
       date: 1688202465,
@@ -318,7 +284,7 @@ const discussion = () => {
     },
     {
       date: 1688202468,
-      text: "Bonjour ! Comment ça va ?",
+      text: 'Bonjour ! Comment ça va ?',
       owner: true,
       status: {
         send: 1688202468,
@@ -328,7 +294,7 @@ const discussion = () => {
     },
     {
       date: 1688207428,
-      text: "Bonjour ! Comment ça va ?",
+      text: 'Bonjour ! Comment ça va ?',
       owner: true,
       status: {
         send: 1688202468,
@@ -336,7 +302,7 @@ const discussion = () => {
         seen: 1688202470,
       },
     },
-    // Ajoutez les autres objets ici avec les valeurs souhaitées
+
     {
       date: 1688202471,
       text: "Hey, qu'est-ce que tu deviens ?",
@@ -359,7 +325,7 @@ const discussion = () => {
     },
     {
       date: 1688202477,
-      text: "Coucou ! Tu es disponible pour une discussion ?",
+      text: 'Coucou ! Tu es disponible pour une discussion ?',
       owner: false,
       status: {
         send: 1688202477,
@@ -386,7 +352,7 @@ const discussion = () => {
         { translateY: telegram.value },
         ...[
           {
-            rotate: "180deg",
+            rotate: '180deg',
           },
         ],
       ],
@@ -394,15 +360,15 @@ const discussion = () => {
     }),
     []
   );
-  const ViewInputStyle = useAnimatedStyle(
+  const viewInputStyle = useAnimatedStyle(
     () => ({
       transform: [{ translateY: telegram.value }],
-      backgroundColor: Colors[colorSheme ?? "light"].lightGrey,
-      flexDirection: "row",
-      alignItems: "flex-end",
-      justifyContent: "center",
+      backgroundColor: Colors[colorSheme ?? 'light'].lightGrey,
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+      justifyContent: 'center',
       marginHorizontal: 10,
-      overflow: "hidden",
+      overflow: 'hidden',
       borderRadius: 84,
       paddingVertical: 7,
       marginBottom: 2,
@@ -417,61 +383,63 @@ const discussion = () => {
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: "white" }}>
+    <View style={{ flex: 1, backgroundColor: 'white' }}>
       <View
         style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          backgroundColor: Colors[colorSheme ?? "light"].background,
-          borderBottomWidth: 1,
-          borderBottomColor: Colors[colorSheme ?? "light"].greyDark,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          backgroundColor: Colors[colorSheme ?? 'light'].background,
+          borderBottomWidth: 0.2,
+          borderBottomColor: Colors[colorSheme ?? 'light'].greyDark,
+          position: 'absolute',
+
+          zIndex: 85,
+          top: 0,
+          left: 0,
+          right: 0,
         }}
       >
         <View
           style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
+            flexDirection: 'row',
+            justifyContent: 'space-between',
             flex: 1,
             paddingVertical: verticalScale(2),
           }}
         >
           <View
             style={{
-              flexDirection: "row",
+              flexDirection: 'row',
               columnGap: horizontalScale(10),
               flex: 1,
-              alignItems: "center",
+              alignItems: 'center',
             }}
           >
-             <TouchableOpacity onPress={() => { route.back()}}>
-   <Ionicons
-              name="arrow-back"
-              size={28}
-              color="black"
-              style={{ paddingHorizontal: horizontalScale(7) }}
-            />
-             </TouchableOpacity>
-         
+            <TouchableOpacity
+              onPress={() => {
+                route.back();
+              }}
+            >
+              <Ionicons name="arrow-back" size={28} color="black" style={{ paddingHorizontal: horizontalScale(7) }} />
+            </TouchableOpacity>
+
             <Image
-              source={require("../../assets/images/user2.png")}
+              source={require('../../assets/images/user2.png')}
               style={{
                 width: moderateScale(45),
                 aspectRatio: 1,
                 borderRadius: 99,
-                alignSelf: "center",
+                alignSelf: 'center',
               }}
             />
             <View>
-              <TextRegular
-                style={{ fontSize: moderateScale(15) }}
-                numberOfLines={1}
-              >
-                Andy sandy fracik frerere
+              <TextRegular style={{ fontSize: moderateScale(15) }} numberOfLines={1}>
+                Andy sandy
               </TextRegular>
               <TextRegular
                 numberOfLines={1}
                 style={{
-                  color: Colors[colorSheme ?? "light"].messageColourLight,
+                  color: Colors[colorSheme ?? 'light'].messageColourLight,
                 }}
               >
                 En ligne
@@ -481,68 +449,54 @@ const discussion = () => {
 
           <View
             style={{
-              flexDirection: "row",
+              flexDirection: 'row',
               // columnGap: horizontalScale(1),
-              alignItems: "center",
+              alignItems: 'center',
             }}
           >
-            <Ionicons
-              name="ios-call"
-              size={24}
-              color="black"
-              style={{ paddingHorizontal: horizontalScale(10) }}
-            />
-            <Ionicons
-              name="ios-videocam"
-              size={24}
-              color="black"
-              style={{ paddingHorizontal: horizontalScale(10) }}
-            />
+            <Ionicons name="ios-call" size={24} color="black" style={{ paddingHorizontal: horizontalScale(10) }} />
+            <Ionicons name="ios-videocam" size={24} color="black" style={{ paddingHorizontal: horizontalScale(10) }} />
           </View>
         </View>
       </View>
 
-      <Animated.ScrollView
-        showsVerticalScrollIndicator={false}
-        style={scrollViewStyle}
-      >
+      <Animated.ScrollView showsVerticalScrollIndicator={false} style={scrollViewStyle}>
         <View
           style={{
             transform: [
               {
-                rotate: "180deg",
+                rotate: '180deg',
               },
             ],
-            // flex: 1,
-            backgroundColor: "white",
           }}
         >
+          <View
+            style={{
+              height: verticalScale(80),
+              width,
+            }}
+          />
           <Animated.View style={fakeView} />
           {messages.map((message, index) => (
             <MessageItem key={index} item={message} />
           ))}
         </View>
       </Animated.ScrollView>
-      <AnimatedViewInput style={ViewInputStyle}>
-        {/* {duration > 0 ? (
+
+      <AnimatedViewInput style={viewInputStyle}>
+        {duration > 0 && (
           <MaterialIcons
             name="fiber-manual-record"
             size={27}
-            color={Math.floor(duration) % 2 === 0 ? "#f00" : "#f005"}
+            color={Math.floor(duration) % 2 === 0 ? '#f00' : '#f005'}
           />
-        ) : (
-          <MaterialIcons
-            name="emoji-emotions"
-            size={27}
-            color={Colors[colorSheme ?? "light"].overLay}
-          />
-        )} */}
+        )}
         <Animated.View
           style={[
             animatedStyles,
             {
-              alignSelf: "center",
-              alignItems: "flex-start",
+              alignSelf: 'center',
+              alignItems: 'flex-start',
               flex: 10,
               height: 30,
             },
@@ -552,15 +506,15 @@ const discussion = () => {
             <View
               style={{
                 width: width - horizontalScale(140),
-                flexDirection: "row",
-                alignItems: "baseline",
+                flexDirection: 'row',
+                alignItems: 'baseline',
                 gap: horizontalScale(15),
               }}
             >
               <TextRegular
                 style={{
                   fontSize: moderateScale(17),
-                  color: Colors[colorSheme ?? "light"].overLay,
+                  color: Colors[colorSheme ?? 'light'].overLay,
                 }}
               >
                 {formatDuration(duration)}
@@ -568,52 +522,46 @@ const discussion = () => {
               <TextRegular
                 style={{
                   fontSize: moderateScale(14),
-                  color: Colors[colorSheme ?? "light"].overLay,
+                  color: Colors[colorSheme ?? 'light'].overLay,
                 }}
               >
                 Slide to send
               </TextRegular>
             </View>
           ) : (
-
-            <Controller        
-            control={control}        
-            name="name"        
-            render={({field: {onChange , value, onBlur}  } : {field : any}) => (            
-              <TextInput
-              ref={inputRef}
-              placeholder={"Write something..."}
-              placeholderTextColor={Colors[colorSheme ?? "light"].greyDark}
-              // value={text}
-              onChange={onChange}
-              value={value}
-              multiline={true}
-              scrollEnabled={true}
-              onContentSizeChange={handleContentSizeChange}
-              style={{
-                fontSize: moderateScale(17),
-                color: Colors[colorSheme ?? "light"].text,
-                // backgroundColor: "#eee",
-                marginHorizontal: horizontalScale(15),
-                // paddingLeft: horizontalScale(10),
-                paddingVertical: verticalScale(5),
-                width: "100%",
-                // height: "100%",
-              }}
-            />    
-            )} 
-         />
-       
+            <Controller
+              control={control}
+              name="name"
+              render={({ field: { onChange, value } }: { field: any }) => (
+                <TextInput
+                  ref={inputRef}
+                  placeholder={'Write something...'}
+                  placeholderTextColor={Colors[colorSheme ?? 'light'].greyDark}
+                  onChange={onChange}
+                  value={value}
+                  multiline={true}
+                  scrollEnabled={true}
+                  onContentSizeChange={handleContentSizeChange}
+                  style={{
+                    fontSize: moderateScale(17),
+                    color: Colors[colorSheme ?? 'light'].text,
+                    fontFamily: 'Thin',
+                    marginHorizontal: horizontalScale(15),
+                    width: '100%',
+                    // height: "100%",
+                  }}
+                />
+              )}
+            />
           )}
         </Animated.View>
         <View
           style={{
-            flexDirection: "row",
+            flexDirection: 'row',
             // flex: 1,
-            backgroundColor: "#0000",
-            justifyContent: "space-between",
-            alignItems: "center",
-
+            backgroundColor: '#0000',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             marginHorizontal: horizontalScale(5),
           }}
         >
@@ -622,21 +570,17 @@ const discussion = () => {
               onPress={() => {
                 if (!text) {
                   chooseImage();
-                  console.log("file");
+                  console.log('file');
                 }
               }}
               style={{}}
             >
-              <Ionicons
-                name="add-circle"
-                size={28}
-                color={Colors[colorSheme ?? "light"].tertiary}
-              />
+              <Ionicons name="add-circle" size={28} color={Colors[colorSheme ?? 'light'].greyDark} />
             </TouchableOpacity>
           )}
           <View
             style={{
-              backgroundColor: "#0000",
+              backgroundColor: '#0000',
             }}
           >
             {text && regex.test(text) ? (
@@ -644,15 +588,11 @@ const discussion = () => {
                 style={{}}
                 onPress={() => {
                   if (text && regex.test(text)) {
-                    setText("");
+                    setText('');
                   }
                 }}
               >
-                <Ionicons
-                  name="send"
-                  size={27}
-                  color={Colors[colorSheme ?? "light"].messageColourLight}
-                />
+                <Ionicons name="send" size={27} color={Colors[colorSheme ?? 'light'].messageColourLight} />
               </TouchableOpacity>
             ) : (
               <PanGestureHandler onGestureEvent={gestureHandler}>
@@ -661,13 +601,13 @@ const discussion = () => {
                     // { flex: 1 },
                     voiceNoteMoveX,
                     duration > 0 && {
-                      position: "absolute",
+                      position: 'absolute',
                       top: verticalScale(-70),
                       width: horizontalScale(90),
                       height: verticalScale(90),
-                      backgroundColor: "#000",
-                      justifyContent: "center",
-                      alignItems: "center",
+                      backgroundColor: '#000',
+                      justifyContent: 'center',
+                      alignItems: 'center',
                       borderRadius: 99,
                     },
                   ]}
@@ -676,8 +616,8 @@ const discussion = () => {
                     // delayPressOut={50}
                     style={[
                       {
-                        justifyContent: "center",
-                        alignItems: "center",
+                        justifyContent: 'center',
+                        alignItems: 'center',
                         // flex: 1,
                       },
                     ]}
@@ -690,14 +630,10 @@ const discussion = () => {
                     }}
                   >
                     <MaterialIcons
-                      name={duration > 0 ? "stop" : "keyboard-voice"}
+                      name={duration > 0 ? 'stop' : 'keyboard-voice'}
                       size={duration > 0 ? 47 : 27}
-                      style={{ padding: moderateScale(5) }}
-                      color={
-                        duration > 0
-                          ? "red"
-                          : Colors[colorSheme ?? "light"].messageColourLight
-                      }
+                      style={{ paddingHorizontal: horizontalScale(8) }}
+                      color={duration > 0 ? 'red' : Colors[colorSheme ?? 'light'].messageColourLight}
                     />
                   </TouchableOpacity>
                 </Animated.View>
@@ -715,31 +651,31 @@ const MessageItem = memo(({ item }: { item: Message }) => {
       <TouchableOpacity
         onPress={(e) => {}}
         onLongPress={() => {
-          console.log("ya koi");
+          console.log('ya koi');
         }}
         style={[
           {
             padding: moderateScale(5),
             margin: moderateScale(10),
-            maxWidth: "80%",
-            flexDirection: "column",
+            maxWidth: '80%',
+            flexDirection: 'column',
             // gap: 4,
             elevation: 99,
           },
           item?.owner
             ? {
-                alignSelf: "flex-end",
+                alignSelf: 'flex-end',
               }
             : {
-                alignSelf: "flex-start",
+                alignSelf: 'flex-start',
               },
         ]}
       >
         <View
           style={{
-            flexDirection: "column",
+            flexDirection: 'column',
             // overflow: "hidden",
-            backgroundColor: "#0000",
+            backgroundColor: '#0000',
           }}
         >
           {item?.text ? (
@@ -749,23 +685,23 @@ const MessageItem = memo(({ item }: { item: Message }) => {
                   ? {
                       // borderTopLeftRadius: 10,
                       borderTopLeftRadius: moderateScale(25),
-                      borderBottomLeftRadius:  moderateScale(25),
-                      borderBottomRightRadius:  moderateScale(25),
-                      backgroundColor: "#7285E5",
+                      borderBottomLeftRadius: moderateScale(25),
+                      borderBottomRightRadius: moderateScale(25),
+                      backgroundColor: '#7285E5',
                     }
                   : {
-                      borderTopRightRadius:  moderateScale(25),
-                      backgroundColor: "#ECECEC",
+                      borderTopRightRadius: moderateScale(25),
+                      backgroundColor: '#ECECEC',
 
-                      borderBottomLeftRadius:  moderateScale(25),
-                      borderBottomRightRadius:  moderateScale(25),
+                      borderBottomLeftRadius: moderateScale(25),
+                      borderBottomRightRadius: moderateScale(25),
                     },
               ]}
             >
               <TextRegular
                 style={{
                   fontSize: moderateScale(15),
-                  color: item?.owner ? "#fef" : "#000",
+                  color: item?.owner ? '#fef' : '#000',
                   padding: moderateScale(7),
                 }}
               >
@@ -815,9 +751,9 @@ const MessageItem = memo(({ item }: { item: Message }) => {
         </View>
         <TextRegularItalic
           style={{
-            color: "grey",
-            textAlign: item?.owner ? "right" : "left",
-            backgroundColor: "#0000",
+            color: 'grey',
+            textAlign: item?.owner ? 'right' : 'left',
+            backgroundColor: '#0000',
             fontSize: moderateScale(12),
           }}
         >
@@ -827,4 +763,4 @@ const MessageItem = memo(({ item }: { item: Message }) => {
     </View>
   );
 });
-export default discussion;
+export default React.memo(discussion);

@@ -47,12 +47,12 @@ const Login = () => {
       backgroundColor: interpolateColor(
         animatedIndex.value,
         [0, 1],
-        ["#fff", "#FCF3F3"]
+        ["#fff", "#FCF3F3"],
       ),
     }));
     const containerStyle = useMemo(
       () => [style, containerAnimatedStyle],
-      [style, containerAnimatedStyle]
+      [style, containerAnimatedStyle],
     );
 
     return <Animated.View pointerEvents="none" style={containerStyle} />;
@@ -103,7 +103,7 @@ const Login = () => {
         }
       }
     },
-    [BtranslateY, Bopacity, TtranslateY, Topacity, flex, height]
+    [BtranslateY, Bopacity, TtranslateY, Topacity, flex, height],
   );
 
   const animatedInfoB = useAnimatedStyle(() => {
@@ -335,8 +335,7 @@ const Login = () => {
           <TouchableOpacity
             style={{
               alignSelf: "center",
-              backgroundColor:
-                Colors[colorScheme ?? "light"].primaryColourLight,
+              backgroundColor: Colors[colorScheme ?? "light"].primaryColour,
               paddingVertical: verticalScale(5),
               paddingHorizontal: horizontalScale(30),
               borderRadius: 20,
@@ -345,7 +344,7 @@ const Login = () => {
           >
             <TextRegular
               style={{
-                fontSize: moderateScale(18),
+                fontSize: moderateScale(16),
                 color: Colors[colorScheme ?? "light"].overLay,
               }}
             >
@@ -360,7 +359,7 @@ const Login = () => {
           >
             <TextRegular
               style={{
-                fontSize: moderateScale(15),
+                fontSize: moderateScale(14),
                 color: Colors[colorScheme ?? "light"].secondaryColour,
                 textAlign: "center",
               }}

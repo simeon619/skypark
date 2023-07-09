@@ -25,7 +25,7 @@ const SurveyForm = ({
   isExpanded: any;
 }) => {
   const { primaryColour, primaryColourLight, name } = useToggleStore(
-    (state) => state
+    (state) => state,
   );
   const colorScheme = useColorScheme();
   const { IconName } = useTypeForm((state) => state);

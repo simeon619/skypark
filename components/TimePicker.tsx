@@ -17,7 +17,7 @@ const TimePicker = () => {
 
   const handleScroll = (
     unit: string,
-    event: NativeSyntheticEvent<NativeScrollEvent>
+    event: NativeSyntheticEvent<NativeScrollEvent>,
   ) => {
     const { contentOffset, layoutMeasurement } = event.nativeEvent;
     const scrolledPercentage = contentOffset.y / layoutMeasurement.height;

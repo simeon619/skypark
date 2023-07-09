@@ -73,7 +73,7 @@ const InstanceAudio = ({ voiceUrl }: { voiceUrl: any }) => {
           setAudioPosition(() =>
             status.positionMillis === 0
               ? status.durationMillis || 0
-              : status.positionMillis
+              : status.positionMillis,
           );
 
           if (status.didJustFinish) {
@@ -132,7 +132,7 @@ const InstanceAudio = ({ voiceUrl }: { voiceUrl: any }) => {
         // overshootClamping: true,
         // restDisplacementThreshold: 1,
         // restSpeedThreshold: 1,
-      }
+      },
     );
     return {
       width: widthAnim.value,

@@ -25,54 +25,89 @@ import {
 } from "@react-navigation/native";
 import { MenuProvider } from "react-native-popup-menu";
 
-import { useFonts } from "expo-font";
+import * as Font from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
-import { useEffect } from "react";
-import { useColorScheme } from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import { useColorScheme, View } from "react-native";
 import { KeyboardProvider } from "react-native-keyboard-controller";
+
 export { ErrorBoundary } from "expo-router";
 
-export const unstable_settings = {
-  initialRouteName: "(tabs)",
-};
-
 export default function RootLayout() {
-  const [loaded, error] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
-    ...{
-      Thin,
-      ThinItalic,
-      ExtraLight,
-      ExtraLightItalic,
-      Light,
-      LightItalic,
-      Regular,
-      RegularItalic,
-      Medium,
-      MediumItalic,
-      SemiBold,
-      SemiBoldItalic,
-      Bold,
-      BoldItalic,
-      ExtraBold,
-      ExtraBoldItalic,
-      Black,
-      BlackItalic,
-    },
-    // ...FontAwesome.font,
-  });
+  SplashScreen.preventAutoHideAsync();
+  const [appIsReady, setAppIsReady] = useState(false);
+
+  useEffect(() => {
+    async function prepare() {
+      try {
+        // load fonts, make any API calls you need to do here
+        await Font.loadAsync({
+          SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+          ...{
+            Thin,
+            ThinItalic,
+            ExtraLight,
+            ExtraLightItalic,
+            Light,
+            LightItalic,
+            Regular,
+            RegularItalic,
+            Medium,
+            MediumItalic,
+            SemiBold,
+            SemiBoldItalic,
+            Bold,
+            BoldItalic,
+            ExtraBold,
+            ExtraBoldItalic,
+            Black,
+            BlackItalic,
+          },
+        });
+        // Artificially delay for two seconds to simulate a slow loading
+        // experience. Please remove this if you copy and paste the code!
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        // Tell the application to render
+        setAppIsReady(true);
+      }
+    }
+
+    prepare();
+  }, []);
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
-  useEffect(() => {
-    if (error) throw error;
-  }, [error]);
+  const onLayoutRootView = useCallback(async () => {
+    if (appIsReady) {
+      // This tells the splash screen to hide immediately! If we call this after
+      // `setAppIsReady`, then we may see a blank screen while the app is
+      // loading its initial state and rendering its first pixels. So instead,
+      // we hide the splash screen once we know the root view has already
+      // performed layout.
+      await SplashScreen.hideAsync();
+    }
+  }, [appIsReady]);
 
+  if (!appIsReady) {
+    return null;
+  }
   return (
-    <>
-      {/* Keep the splash screen open until the assets have loaded. In the future, we should just support async font loading with a native version of font-display. */}
-      {!loaded && <SplashScreen />}
-      {loaded && <RootLayoutNav />}
-    </>
+    <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
+      {appIsReady && <RootLayoutNav />}
+    </View>
+    // <View
+    //     style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+    //     onLayout={onLayoutRootView}>
+    //     <Text>SplashScreen Demo! 👋</Text>
+    //     <Entypo name="rocket" size={30} />
+    // </View>
+    // <View onLayout={onLayoutRootView}>
+    //   {/* Keep the splash screen open until the assets have loaded. In the future, we should just support async font loading with a native version of font-display. */}
+    //   {/*{!loaded && <SplashScreen />}*/}
+    // <RootLayoutNav />
+    // </View>
   );
 }
 

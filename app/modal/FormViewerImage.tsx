@@ -41,4 +41,4 @@ const FormViewerImage = () => {
   );
 };
 
-export default FormViewerImage;
+export default React.memo(FormViewerImage);

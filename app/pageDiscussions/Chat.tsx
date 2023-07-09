@@ -1,57 +1,61 @@
-import { Ionicons } from "@expo/vector-icons";
-import { Image } from "expo-image";
-import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
-import { Text, useColorScheme } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { formatMessageDate } from "../../Utilis/date";
-import { horizontalScale, moderateScale } from "../../Utilis/metrics";
-import { TextMedium, TextMediumItalic } from "../../components/StyledText";
-import { ScrollView, View } from "../../components/Themed";
-import Colors from "../../constants/Colors";
-import useToggleStore from "../../store/preference";
-import user from "../../user.json";
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import React, { useCallback, useEffect, useState } from 'react';
+import { FlatList, useColorScheme } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import Colors from '../../constants/Colors';
+import useToggleStore, { useMenuDiscussionIsOpen } from '../../store/preference';
+import user from '../../user.json';
+import { TextMedium, TextRegular, TextRegularItalic } from '../../components/StyledText';
+import { horizontalScale, moderateScale, verticalScale } from '../../Utilis/metrics';
+import { View } from '../../components/Themed';
+import { formatMessageDate } from '../../Utilis/date';
+import { Image } from 'expo-image';
+
 const Chat = () => {
   const [conversations, setConversations] = useState<typeof user>([]);
   const colorScheme = useColorScheme();
   const { primaryColour } = useToggleStore((state) => state);
+  const { ctxMenu } = useMenuDiscussionIsOpen((state) => state);
+  const router = useRouter();
   useEffect(() => {
     setConversations(() => user);
   }, []);
 
-  const WhatIconStatut = ({
-    send,
-    received,
-    seen,
-  }: {
-    send: number | null;
-    received: number | null;
-    seen: number | null;
-  }) => {
-    if (received && seen) {
-      return <Ionicons name="checkmark-done-outline" size={18} color="blue" />;
-    } else if (received) {
-      return <Ionicons name="checkmark-done-outline" size={18} color="grey" />;
-    } else if (send) {
-      return <Ionicons name="checkmark-outline" size={18} color="grey" />;
-    } else
-      return <Ionicons name="remove-circle-outline" size={16} color="grey" />;
-  };
+  const whatIconStatus = useCallback(
+    ({ send, received, seen }: { send: number | null; received: number | null; seen: number | null }) => {
+      if (received && seen) {
+        return <Ionicons name="checkmark-done-outline" size={18} color="blue" />;
+      } else if (received) {
+        return <Ionicons name="checkmark-done-outline" size={18} color="grey" />;
+      } else if (send) {
+        return <Ionicons name="checkmark-outline" size={18} color="grey" />;
+      } else return <Ionicons name="remove-circle-outline" size={16} color="grey" />;
+    },
+    []
+  );
 
-  const router = useRouter();
   return (
-    <ScrollView style={{ flex: 1 }}>
-      {conversations.map((conversation, index) => (
+    <FlatList
+      style={{ flex: 1 }}
+      data={conversations}
+      keyExtractor={(item, index) => index.toString()}
+      contentContainerStyle={{
+        flexGrow: 1,
+        paddingBottom: verticalScale(50),
+        backgroundColor: Colors[colorScheme ?? 'light'].background,
+      }}
+      renderItem={({ item: conversation, index }) => (
         <TouchableOpacity
+          disabled={ctxMenu}
           onPress={() => {
-            router.push("modal/discussion");
+            router.push('modal/discussion');
           }}
-          key={index}
           style={{
-            flexDirection: "row",
-            alignItems: "center",
+            flexDirection: 'row',
+            alignItems: 'center',
             padding: 10,
-            borderBottomColor: Colors[colorScheme ?? "light"].grey,
+            borderBottomColor: Colors[colorScheme ?? 'light'].grey,
             borderBottomWidth: 1,
           }}
         >
@@ -68,39 +72,36 @@ const Chat = () => {
             style={{
               flex: 1,
               paddingHorizontal: horizontalScale(10),
-              alignSelf: "stretch",
-              justifyContent: "space-between",
+              alignSelf: 'stretch',
+              justifyContent: 'space-between',
             }}
           >
-            <TextMedium style={{ fontSize: moderateScale(16) }}>
-              {conversation.name}
-            </TextMedium>
-            <TextMediumItalic style={{ color: "gray" }} numberOfLines={1}>
-              {conversation.last_message.Owner &&
-                WhatIconStatut(conversation.last_message.status)}
+            <TextRegular style={{ fontSize: moderateScale(16) }}>{conversation.name}</TextRegular>
+            <TextRegularItalic style={{ color: 'gray' }} numberOfLines={1}>
+              {conversation.last_message.Owner && whatIconStatus(conversation.last_message.status)}
               {conversation.last_message.text}
-            </TextMediumItalic>
+            </TextRegularItalic>
           </View>
           <View
             style={{
-              alignSelf: "stretch",
-              justifyContent: "space-between",
+              alignSelf: 'stretch',
+              justifyContent: 'space-between',
             }}
           >
             <TextMedium
               style={{
-                color: "gray",
-                alignSelf: "flex-start",
+                color: 'gray',
+                alignSelf: 'flex-start',
                 fontSize: moderateScale(12),
               }}
             >
               {formatMessageDate(conversation.last_message.date)}
             </TextMedium>
             {!conversation.last_message.Owner && (
-              <Text
+              <TextMedium
                 style={{
-                  color: "#fff",
-                  alignSelf: "center",
+                  color: '#fff',
+                  alignSelf: 'center',
                   backgroundColor: primaryColour,
                   padding: moderateScale(3),
                   borderRadius: 99,
@@ -108,13 +109,13 @@ const Chat = () => {
                 }}
               >
                 {Math.ceil(Math.random() * 2)}
-              </Text>
+              </TextMedium>
             )}
           </View>
         </TouchableOpacity>
-      ))}
-    </ScrollView>
+      )}
+    />
   );
 };
 
-export default Chat;
+export default React.memo(Chat);

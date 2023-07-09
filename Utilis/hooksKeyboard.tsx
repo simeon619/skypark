@@ -20,7 +20,7 @@ export const useTelegramTransitions = () => {
               0.19919472913616398,
               0.010644531250000006,
               0.27920937042459737,
-              0.91025390625
+              0.91025390625,
             ),
           });
         } else {
@@ -32,7 +32,7 @@ export const useTelegramTransitions = () => {
         }
       },
     },
-    []
+    [],
   );
 
   return { height };

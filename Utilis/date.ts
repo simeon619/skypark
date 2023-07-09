@@ -15,7 +15,7 @@ export const calculeDate = (times: any) => {
 
       includeSeconds: true,
       locale: fr,
-    }
+    },
   );
   return time;
 };
@@ -23,7 +23,7 @@ export const formatMessageDate = (timestamp: number) => {
   const messageDate = new Date(timestamp * 1000);
   console.log(
     "🚀 ~ file: date.ts:24 ~ formatMessageDate ~ messageDate:",
-    messageDate
+    messageDate,
   );
 
   let formattedDate;
@@ -39,4 +39,50 @@ export const formatMessageDate = (timestamp: number) => {
   }
 
   return formattedDate;
+};
+export const formatPostDate = (timestamp: Date) => {
+  const currentDate = new Date();
+  const messageDate = new Date(timestamp);
+
+  const diffInSeconds = Math.floor(
+    (currentDate.getTime() - messageDate.getTime()) / 1000,
+  );
+
+  if (diffInSeconds < 60) {
+    return `${diffInSeconds} seconde${diffInSeconds !== 1 ? "s" : ""}.`;
+  }
+
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+
+  if (diffInMinutes < 60) {
+    return `${diffInMinutes} minute${diffInMinutes !== 1 ? "s" : ""}.`;
+  }
+
+  const diffInHours = Math.floor(diffInMinutes / 60);
+
+  if (diffInHours < 24) {
+    return `${diffInHours} heure${diffInHours !== 1 ? "s" : ""}.`;
+  }
+
+  const diffInDays = Math.floor(diffInHours / 24);
+
+  if (diffInDays < 7) {
+    return `${diffInDays} jour${diffInDays !== 1 ? "s" : ""}.`;
+  }
+
+  const diffInWeeks = Math.floor(diffInDays / 7);
+
+  if (diffInWeeks < 4) {
+    return `${diffInWeeks} semaine${diffInWeeks !== 1 ? "s" : ""}.`;
+  }
+
+  const diffInMonths = Math.floor(diffInDays / 30);
+
+  if (diffInMonths < 12) {
+    return `${diffInMonths} mois.`;
+  }
+
+  const diffInYears = Math.floor(diffInDays / 365);
+
+  return `${diffInYears} an${diffInYears !== 1 ? "s" : ""}.`;
 };

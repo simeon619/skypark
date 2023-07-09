@@ -9,4 +9,4 @@ const notification = () => {
   );
 };
 
-export default notification;
+export default React.memo(notification);

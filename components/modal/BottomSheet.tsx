@@ -39,12 +39,12 @@ const BottomSheetModal = () => {
       backgroundColor: interpolateColor(
         animatedIndex.value,
         [0, 1],
-        ["#fff", "#FCF3F3"]
+        ["#fff", "#FCF3F3"],
       ),
     }));
     const containerStyle = useMemo(
       () => [style, containerAnimatedStyle],
-      [style, containerAnimatedStyle]
+      [style, containerAnimatedStyle],
     );
 
     return <Animated.View pointerEvents="none" style={containerStyle} />;
@@ -82,7 +82,7 @@ const BottomSheetModal = () => {
         }
       }
     },
-    [BtranslateY, Bopacity, TtranslateY, Topacity, flex, height]
+    [BtranslateY, Bopacity, TtranslateY, Topacity, flex, height],
   );
 
   const animatedInfoB = useAnimatedStyle(() => {

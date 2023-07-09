@@ -12,21 +12,24 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import {
   horizontalScale,
   moderateScale,
+  shadow,
   verticalScale,
 } from "../../Utilis/metrics";
-import { TextBold, TextMedium } from "../../components/StyledText";
+import { TextMedium } from "../../components/StyledText";
 import { View } from "../../components/Themed";
+import ItemMenu from "../../components/discussion/ItemMenu";
+import TabPageItem from "../../components/utilis/TabPageItem";
 import Colors from "../../constants/Colors";
-import useToggleStore from "../../store/preference";
+import useToggleStore, {
+  useMenuDiscussionIsOpen,
+} from "../../store/preference";
 import Call from "../pageDiscussions/Call";
 import Chat from "../pageDiscussions/Chat";
 import CieGestion from "../pageDiscussions/CieGestion";
 
 const message = () => {
-  const { primaryColour, primaryColourLight } = useToggleStore(
-    (state) => state
-  );
-
+  const { primaryColour } = useToggleStore((state) => state);
+  const { toggleValue } = useMenuDiscussionIsOpen((state) => state);
   const colorScheme = useColorScheme();
   const Tab = createMaterialTopTabNavigator();
   return (
@@ -41,9 +44,9 @@ const message = () => {
         }}
       >
         <View>
-          <TextBold style={{ fontSize: moderateScale(21) }}>
+          <TextMedium style={{ fontSize: moderateScale(21) }}>
             Discussions
-          </TextBold>
+          </TextMedium>
         </View>
         <View
           style={{
@@ -57,7 +60,7 @@ const message = () => {
             size={24}
             color={Colors[colorScheme ?? "light"].greyDark}
           />
-          <Menu style={{ borderRadius: moderateScale(25) }}>
+          <Menu onClose={toggleValue} onOpen={toggleValue}>
             <MenuTrigger
               children={
                 <Ionicons
@@ -67,46 +70,28 @@ const message = () => {
                 />
               }
             />
-            <MenuOptions>
+            <MenuOptions
+              optionsContainerStyle={{
+                borderRadius: moderateScale(20),
+                width: "auto",
+                paddingHorizontal: horizontalScale(15),
+                ...shadow(92),
+              }}
+            >
               <MenuOption onSelect={() => alert(`Delete`)}>
-                <TextMedium
-                  style={{
-                    fontSize: moderateScale(16),
-                    paddingLeft: horizontalScale(10),
-                  }}
-                >
-                  settings
-                </TextMedium>
+                <ItemMenu value="Creez Groupe" />
               </MenuOption>
               <MenuOption onSelect={() => alert(`Delete`)}>
-                <TextMedium
-                  style={{
-                    fontSize: moderateScale(16),
-                    paddingLeft: horizontalScale(10),
-                  }}
-                >
-                  sauvegarde
-                </TextMedium>
+                <ItemMenu value="Epinglez" />
               </MenuOption>
               <MenuOption onSelect={() => alert(`Delete`)}>
-                <TextMedium
-                  style={{
-                    fontSize: moderateScale(16),
-                    paddingLeft: horizontalScale(10),
-                  }}
-                >
-                  Archives
-                </TextMedium>
+                <ItemMenu value="Bloquez" />
               </MenuOption>
               <MenuOption onSelect={() => alert(`Delete`)}>
-                <TextMedium
-                  style={{
-                    fontSize: moderateScale(16),
-                    paddingLeft: horizontalScale(10),
-                  }}
-                >
-                  Delete
-                </TextMedium>
+                <ItemMenu value="Settings" />
+              </MenuOption>
+              <MenuOption onSelect={() => alert(`Delete`)}>
+                <ItemMenu value="Archives" />
               </MenuOption>
             </MenuOptions>
           </Menu>
@@ -120,7 +105,6 @@ const message = () => {
             width: Dimensions.get("window").width,
           }}
           screenOptions={{
-            // tabBarGap: horizontalScale(25),
             tabBarScrollEnabled: true,
             tabBarStyle: {
               backgroundColor: "#fff",
@@ -131,9 +115,6 @@ const message = () => {
 
             tabBarItemStyle: {
               width: "auto",
-              // flex: 1,
-              // height: "auto",
-              // alignItems: "flex-start",
             },
           }}
         >
@@ -142,28 +123,7 @@ const message = () => {
             component={Chat}
             options={{
               tabBarLabel({ focused, children }) {
-                return (
-                  <View
-                    lightColor="#0000"
-                    darkColor="#0000"
-                    style={[
-                      {
-                        // flexDirection: "row",
-                        alignSelf: "flex-start",
-                        // justifyContent: "flex-start",
-                      },
-                    ]}
-                  >
-                    <TextMedium
-                      style={{
-                        fontSize: moderateScale(16),
-                        opacity: focused ? 1 : 0.6,
-                      }}
-                    >
-                      {children}
-                    </TextMedium>
-                  </View>
-                );
+                return <TabPageItem children={children} focused={focused} />;
               },
             }}
           />
@@ -172,30 +132,7 @@ const message = () => {
             component={CieGestion}
             options={{
               tabBarLabel({ focused, children }) {
-                return (
-                  <View
-                    lightColor="#0000"
-                    darkColor="#0000"
-                    style={[
-                      {
-                        // flexDirection: "row",
-                        alignSelf: "flex-start",
-                        // justifyContent: "flex-start",
-                      },
-                      // focused && { width: 100 },
-                    ]}
-                  >
-                    <TextMedium
-                      style={{
-                        fontSize: moderateScale(16),
-                        textAlign: "left",
-                        opacity: focused ? 1 : 0.6,
-                      }}
-                    >
-                      {children}
-                    </TextMedium>
-                  </View>
-                );
+                return <TabPageItem children={children} focused={focused} />;
               },
             }}
           />
@@ -204,30 +141,7 @@ const message = () => {
             component={Call}
             options={{
               tabBarLabel({ focused, children }) {
-                return (
-                  <View
-                    lightColor="#0000"
-                    darkColor="#0000"
-                    style={[
-                      {
-                        // flexDirection: "row",
-                        alignSelf: "flex-start",
-                        // justifyContent: "flex-start",
-                      },
-                      // focused && { width: 100 },
-                    ]}
-                  >
-                    <TextMedium
-                      style={{
-                        fontSize: moderateScale(16),
-                        textAlign: "left",
-                        opacity: focused ? 1 : 0.6,
-                      }}
-                    >
-                      {children}
-                    </TextMedium>
-                  </View>
-                );
+                return <TabPageItem children={children} focused={focused} />;
               },
             }}
           />
@@ -237,4 +151,4 @@ const message = () => {
   );
 };
 
-export default message;
+export default React.memo(message);

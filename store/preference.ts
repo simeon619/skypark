@@ -51,8 +51,8 @@ export const useToggleStore = create<ToggleState, any>(
     {
       name: "toggleApp",
       storage: createJSONStorage(() => AsyncStorage),
-    }
-  )
+    },
+  ),
 );
 
 export default useToggleStore;
@@ -80,8 +80,8 @@ export const useTypeForm = create<stateForm, any>(
         set({ IconName: value });
       },
     }),
-    { name: "formType", storage: createJSONStorage(() => AsyncStorage) }
-  )
+    { name: "formType", storage: createJSONStorage(() => AsyncStorage) },
+  ),
 );
 
 //////////////////////////////////////////////////////////////// ViewerParamImages ********************************
@@ -104,5 +104,19 @@ export const useViewerParamImages = create<ViewerParamImages>((set, get) => ({
     if (JSON.stringify(value) !== JSON.stringify(get().data)) {
       set(() => ({ data: value }));
     }
+  },
+}));
+
+//////////////////////////////////////////////////////// MENUinMessage/////////////////
+
+type MenuDiscussionIsOpen = {
+  ctxMenu: boolean;
+  toggleValue: () => void;
+};
+
+export const useMenuDiscussionIsOpen = create<MenuDiscussionIsOpen>((set) => ({
+  ctxMenu: false,
+  toggleValue() {
+    set((state) => ({ ctxMenu: !state.ctxMenu }));
   },
 }));

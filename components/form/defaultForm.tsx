@@ -54,7 +54,7 @@ const DefaultForm = ({
   const [images, setImages] = useState<ImageItem[]>();
   const [prepareImage, setPrepareImage] = useState<imagePrepareShema[]>();
   const { primaryColour, primaryColourLight } = useToggleStore(
-    (state) => state
+    (state) => state,
   );
   const { width } = useWindowDimensions();
   const { IconName } = useTypeForm((state) => state);
@@ -180,7 +180,7 @@ const DefaultForm = ({
               paddingHorizontal: 10,
               alignSelf: "flex-start",
             }}
-            onPress={() => pickPreetyGallery()}
+            onPress={() => pickGallery()}
           >
             <TextLight
               style={{

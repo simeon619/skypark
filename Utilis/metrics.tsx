@@ -15,13 +15,20 @@ const shadow = (elevation: number) => {
       shadowColor: "#000",
       shadowOffset: {
         width: 0,
-        height: elevation,
+        height: elevation / 2,
       },
-      shadowOpacity: 0.4,
+      shadowOpacity: 0.14,
       shadowRadius: elevation / 2,
     };
   } else {
     return {
+      shadowOffset: {
+        width: 0,
+        height: 11,
+      },
+      shadowOpacity: 0.15,
+      shadowRadius: 14.78,
+      shadowColor: "#000",
       elevation: elevation,
     };
   }

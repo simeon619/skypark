@@ -10,4 +10,4 @@ const user = () => {
   );
 };
 
-export default user;
+export default React.memo(user);
