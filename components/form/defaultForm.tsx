@@ -1,51 +1,28 @@
-import MultipleImagePicker from "@baronha/react-native-multiple-image-picker";
-import { AntDesign } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
-import { useRouter } from "expo-router";
-import React, { useState } from "react";
-import {
-  Pressable,
-  TouchableOpacity,
-  useColorScheme,
-  useWindowDimensions,
-} from "react-native";
-import { Dropdown } from "react-native-element-dropdown";
-import Animated, {
-  BounceInDown,
-  BounceOutDown,
-  useAnimatedStyle,
-  withTiming,
-} from "react-native-reanimated";
-import {
-  horizontalScale,
-  moderateScale,
-  verticalScale,
-} from "../../Utilis/metrics";
-import Colors from "../../constants/Colors";
-import useToggleStore, {
-  useTypeForm,
-  useViewerParamImages,
-} from "../../store/preference";
-import ImageRatio from "../ImgRatio";
-import { TextLight, TextRegular } from "../StyledText";
-import { ScrollView, View } from "../Themed";
+import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
+import { AntDesign } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { Pressable, TouchableOpacity, useColorScheme, useWindowDimensions } from 'react-native';
+import { Dropdown } from 'react-native-element-dropdown';
+import Animated, { BounceInDown, BounceOutDown, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import { horizontalScale, moderateScale, verticalScale } from '../../Utilis/metrics';
+import Colors from '../../constants/Colors';
+import useToggleStore, { useTypeForm, useViewerParamImages } from '../../store/preference';
+import ImageRatio from '../ImgRatio';
+import { TextLight, TextRegular } from '../StyledText';
+import { ScrollView, View } from '../Themed';
 type imagePrepareShema =
   | {
       buffer: string;
       fileName: string;
-      encoding: "base64";
+      encoding: 'base64';
       type: string;
       size: number;
       uri: string;
     }
   | undefined;
-const DefaultForm = ({
-  cancel,
-  isExpanded,
-}: {
-  cancel: () => void;
-  isExpanded: any;
-}) => {
+const DefaultForm = () => {
   const colorScheme = useColorScheme();
   //   const isExpanded = useSharedValue(true);
   interface ImageItem {
@@ -53,25 +30,20 @@ const DefaultForm = ({
   }
   const [images, setImages] = useState<ImageItem[]>();
   const [prepareImage, setPrepareImage] = useState<imagePrepareShema[]>();
-  const { primaryColour, primaryColourLight } = useToggleStore(
-    (state) => state,
-  );
+  const { primaryColour, primaryColourLight } = useToggleStore((state) => state);
   const { width } = useWindowDimensions();
   const { IconName } = useTypeForm((state) => state);
   const hideForm = useAnimatedStyle(() => {
     return {
-      display: isExpanded.value && IconName !== "Sondage" ? "flex" : "none",
-      opacity: withTiming(isExpanded.value && IconName !== "Sondage" ? 1 : 0),
+      display: IconName !== 'Sondage' ? 'flex' : 'none',
+      opacity: withTiming(IconName !== 'Sondage' ? 1 : 0),
     };
-  }, [isExpanded, IconName]);
+  }, [IconName]);
 
-  const cancelForm = () => {
-    cancel();
-  };
   const { setParmsImagesForm } = useViewerParamImages();
   const data = [
-    { label: "Post---Neighborhodd", value: "2" },
-    { label: "Post---Building", value: "3" },
+    { label: 'Post---Neighborhodd', value: '2' },
+    { label: 'Post---Building', value: '3' },
   ];
   const [value, setValue] = useState<string>();
   const [isFocus, setIsFocus] = useState(false);
@@ -109,15 +81,15 @@ const DefaultForm = ({
 
         result.assets.forEach((asset) => {
           let base64 = asset.base64;
-          let fileName = asset.uri?.split("/").pop();
-          let ext = fileName?.split(".").pop();
-          let type = asset.type === "image" ? `image/${ext}` : `video/${ext}`;
+          let fileName = asset.uri?.split('/').pop();
+          let ext = fileName?.split('.').pop();
+          let type = asset.type === 'image' ? `image/${ext}` : `video/${ext}`;
           let uri = asset.uri;
 
           if (base64 && fileName) {
             const preparedImage: imagePrepareShema = {
               buffer: base64,
-              encoding: "base64",
+              encoding: 'base64',
               fileName,
               size: 1500,
               type,
@@ -153,32 +125,32 @@ const DefaultForm = ({
         exiting={BounceOutDown}
         style={[
           {
-            flexDirection: "column",
-            alignItems: "stretch",
-            justifyContent: "space-between",
+            flexDirection: 'column',
+            alignItems: 'stretch',
+            justifyContent: 'space-between',
             // borderTopColor: "#0003",
             // borderTopWidth: 1,
             paddingVertical: moderateScale(10),
-            backgroundColor: "#0000",
+            backgroundColor: '#0000',
           },
           hideForm,
         ]}
       >
         <View
           style={{
-            borderTopColor: "#0003",
+            borderTopColor: '#0003',
             borderTopWidth: 1,
-            borderBottomColor: "#0003",
+            borderBottomColor: '#0003',
             borderBottomWidth: 1,
             paddingVertical: verticalScale(10),
           }}
         >
           <TouchableOpacity
             style={{
-              backgroundColor: Colors[colorScheme ?? "light"].lightGrey,
+              backgroundColor: Colors[colorScheme ?? 'light'].lightGrey,
               borderRadius: 20,
               paddingHorizontal: 10,
-              alignSelf: "flex-start",
+              alignSelf: 'flex-start',
             }}
             onPress={() => pickGallery()}
           >
@@ -193,9 +165,9 @@ const DefaultForm = ({
           </TouchableOpacity>
           <ScrollView
             contentContainerStyle={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "flex-end",
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
               gap: 10,
             }}
             horizontal
@@ -211,13 +183,13 @@ const DefaultForm = ({
                     });
                     // setParmsImagesForm({ actualIndex: index, images });
                     router.push({
-                      pathname: "modal/FormViewerImage",
+                      pathname: 'modal/FormViewerImage',
                     });
                   }}
                   key={index}
                   style={{
                     maxWidth: width / 2,
-                    backgroundColor: Colors[colorScheme ?? "light"].background,
+                    backgroundColor: Colors[colorScheme ?? 'light'].background,
                   }}
                 >
                   <Pressable
@@ -225,14 +197,14 @@ const DefaultForm = ({
                       deleteImage(image.uri);
                     }}
                     style={{
-                      position: "absolute",
+                      position: 'absolute',
                       top: 3,
                       zIndex: 8,
                       right: 3,
-                      backgroundColor: "#000a",
+                      backgroundColor: '#000a',
                       borderRadius: 20,
                       padding: 2,
-                      alignSelf: "flex-start",
+                      alignSelf: 'flex-start',
                     }}
                   >
                     <AntDesign name="close" size={20} color="white" />
@@ -247,7 +219,7 @@ const DefaultForm = ({
 
         <View
           style={{
-            backgroundColor: "white",
+            backgroundColor: 'white',
             paddingVertical: verticalScale(16),
           }}
         >
@@ -264,11 +236,11 @@ const DefaultForm = ({
             ]}
             placeholderStyle={{
               fontSize: 16,
-              fontFamily: "Thin",
+              fontFamily: 'Thin',
             }}
             selectedTextStyle={{
               fontSize: 16,
-              fontFamily: "Thin",
+              fontFamily: 'Thin',
             }}
             iconStyle={{
               width: 20,
@@ -278,7 +250,7 @@ const DefaultForm = ({
             maxHeight={200}
             labelField="label"
             valueField="value"
-            placeholder={!isFocus ? "select Categorie" : "..."}
+            placeholder={!isFocus ? 'select Categorie' : '...'}
             value={value}
             onFocus={() => setIsFocus(true)}
             onBlur={() => setIsFocus(false)}
@@ -291,7 +263,7 @@ const DefaultForm = ({
                 style={{
                   marginRight: 5,
                 }}
-                color={isFocus ? primaryColourLight : "black"}
+                color={isFocus ? primaryColourLight : 'black'}
                 name="Safety"
                 size={20}
               />
@@ -309,24 +281,19 @@ const DefaultForm = ({
         >
           <TextRegular
             style={{
-              color: Colors[colorScheme ?? "light"].overLay,
-              textAlign: "center",
+              color: Colors[colorScheme ?? 'light'].overLay,
+              textAlign: 'center',
             }}
           >
             Valider
           </TextRegular>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={{ paddingVertical: verticalScale(10) }}
-          onPress={() => {
-            cancelForm();
-          }}
-        >
+        <TouchableOpacity style={{ paddingVertical: verticalScale(10) }} onPress={() => {}}>
           <TextRegular
             style={{
               color: primaryColour,
               paddingVertical: verticalScale(1),
-              textAlign: "center",
+              textAlign: 'center',
             }}
           >
             Annuler

@@ -1,52 +1,34 @@
-import { FontAwesome } from "@expo/vector-icons";
-import React, { useEffect, useRef, useState } from "react";
-import { TouchableOpacity, useColorScheme } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
-import Animated, {
-  useAnimatedStyle,
-  withTiming,
-} from "react-native-reanimated";
-import {
-  horizontalScale,
-  moderateScale,
-  verticalScale,
-} from "../../Utilis/metrics";
-import Colors from "../../constants/Colors";
-import useToggleStore, { useTypeForm } from "../../store/preference";
-import { TextMedium, TextRegular } from "../StyledText";
-import { View } from "../Themed";
-import TimePicker from "../TimePicker";
+import { FontAwesome } from '@expo/vector-icons';
+import React, { useEffect, useRef, useState } from 'react';
+import { KeyboardAvoidingView, Platform, TouchableOpacity, useColorScheme } from 'react-native';
+import { TextInput } from 'react-native-gesture-handler';
+import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import { horizontalScale, moderateScale, verticalScale } from '../../Utilis/metrics';
+import Colors from '../../constants/Colors';
+import useToggleStore, { useDaysSurvey, useModalTimeSurvey, useTypeForm } from '../../store/preference';
+import { TextLight, TextMedium, TextRegular } from '../StyledText';
+import { View } from '../Themed';
 
-const SurveyForm = ({
-  cancel,
-  isExpanded,
-}: {
-  cancel: () => void;
-  isExpanded: any;
-}) => {
-  const { primaryColour, primaryColourLight, name } = useToggleStore(
-    (state) => state,
-  );
+const SurveyForm = () => {
+  const { primaryColour, primaryColourLight, name } = useToggleStore((state) => state);
   const colorScheme = useColorScheme();
   const { IconName } = useTypeForm((state) => state);
+  const { setModalTimeSurvey, modalTimeSurvey } = useModalTimeSurvey();
   const hideForm = useAnimatedStyle(() => {
     return {
-      display: isExpanded.value && IconName === "Sondage" ? "flex" : "none",
-      opacity: withTiming(isExpanded.value && IconName === "Sondage" ? 1 : 0),
+      display: IconName === 'Sondage' ? 'flex' : 'none',
+      opacity: withTiming(IconName === 'Sondage' ? 1 : 0),
     };
-  }, [isExpanded, IconName]);
-
-  const cancelForm = () => {
-    cancel();
-  };
+  }, [IconName]);
+  const { daysSurvey } = useDaysSurvey();
   const timeoutRef = useRef<NodeJS.Timeout>();
   const [options, setOptions] = useState<string[]>([]);
 
   useEffect(() => {
     if (options.length === 0) {
       timeoutRef.current = setTimeout(() => {
-        setOptions((prevOptions) => ["", ""]);
-      }, 5000);
+        setOptions((prevOptions) => ['', '']);
+      });
     }
 
     return () => {
@@ -66,7 +48,7 @@ const SurveyForm = ({
     if (options.length >= 4) {
       return;
     }
-    const newOptions = [...options, ""];
+    const newOptions = [...options, ''];
     setOptions(newOptions);
   };
   const handleDeleteOption = (index: number) => {
@@ -79,20 +61,23 @@ const SurveyForm = ({
   };
 
   const handleSubmit = () => {
-    console.log("Options sélectionnées:", options);
+    console.log('Options sélectionnées:', options);
   };
   return (
     <Animated.View style={{ ...hideForm }}>
-      <View style={{ padding: 0 }}>
-        <TextMedium>Options</TextMedium>
+      <KeyboardAvoidingView
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 100}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}
+      >
+        <TextLight style={{ fontSize: moderateScale(16) }}>Options</TextLight>
         {options.map((option, index) => {
-          let textPlaceholder = "Option " + (index + 1);
+          let textPlaceholder = 'Option ' + (index + 1);
           return (
             <View
               key={index}
               style={{
-                flexDirection: "row-reverse",
-                alignItems: "center",
+                flexDirection: 'row-reverse',
+                alignItems: 'center',
                 gap: horizontalScale(5),
               }}
             >
@@ -111,19 +96,20 @@ const SurveyForm = ({
               <TextInput
                 key={index}
                 // multiline={true}
+                autoFocus={index >= 2 ? true : false}
                 numberOfLines={1}
                 maxLength={50}
-                cursorColor={"red"}
                 style={{
-                  borderColor: "#1113",
-                  fontFamily: "ExtraLight",
+                  borderColor: '#1113',
+                  fontFamily: 'Light',
                   borderWidth: 1,
                   flex: 1,
+                  fontSize: moderateScale(15),
                   paddingVertical: verticalScale(7),
                   paddingHorizontal: horizontalScale(15),
                   borderRadius: moderateScale(50),
                   marginBottom: verticalScale(15),
-                  textAlignVertical: "center",
+                  textAlignVertical: 'center',
                 }}
                 placeholder={textPlaceholder}
                 value={option}
@@ -139,16 +125,36 @@ const SurveyForm = ({
               borderRadius: 8,
               paddingHorizontal: moderateScale(10),
 
-              alignItems: "flex-start",
+              alignItems: 'flex-start',
               // backgroundColor: "red",
-              alignSelf: "flex-start",
+              alignSelf: 'flex-start',
             }}
             onPress={handleAddOption}
           >
             <FontAwesome name="plus-circle" size={25} />
           </TouchableOpacity>
         )}
-        <TimePicker />
+        <View style={{}}>
+          <TextLight style={{ fontSize: moderateScale(16) }}>Duree du sondage</TextLight>
+
+          <TouchableOpacity
+            style={{ flexDirection: 'row' }}
+            onPress={() => {
+              setModalTimeSurvey(true);
+            }}
+          >
+            <TextMedium
+              style={{
+                flex: 1,
+                textAlign: 'left',
+                color: primaryColour,
+                fontSize: moderateScale(17),
+              }}
+            >
+              {daysSurvey} jour{daysSurvey > 1 ? 's' : ''}
+            </TextMedium>
+          </TouchableOpacity>
+        </View>
         <TouchableOpacity
           onPress={handleSubmit}
           style={{
@@ -161,31 +167,26 @@ const SurveyForm = ({
         >
           <TextRegular
             style={{
-              color: Colors[colorScheme ?? "light"].overLay,
+              color: Colors[colorScheme ?? 'light'].overLay,
               fontSize: 16,
-              textAlign: "center",
+              textAlign: 'center',
             }}
           >
             Valider
           </TextRegular>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={{ paddingBottom: verticalScale(10) }}
-          onPress={() => {
-            cancelForm();
-          }}
-        >
+        <TouchableOpacity style={{ paddingBottom: verticalScale(10) }} onPress={() => {}}>
           <TextRegular
             style={{
               color: primaryColour,
               paddingVertical: verticalScale(1),
-              textAlign: "center",
+              textAlign: 'center',
             }}
           >
             Annuler
           </TextRegular>
         </TouchableOpacity>
-      </View>
+      </KeyboardAvoidingView>
     </Animated.View>
   );
 };

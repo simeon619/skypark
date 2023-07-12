@@ -1,7 +1,7 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
-import { icons } from "./../Utilis/data";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import { icons } from './../Utilis/data';
 
 type StateSchema = {
   primaryColourLight: string;
@@ -11,14 +11,14 @@ type StateSchema = {
 
 export const stateApp: { [key: string]: StateSchema } = {
   B: {
-    primaryColourLight: "#E6D6F8",
-    primaryColour: "#A85DFD",
-    name: "Building",
+    primaryColourLight: '#E6D6F8',
+    primaryColour: '#A85DFD',
+    name: 'Building',
   },
   N: {
-    primaryColour: "#EA9093",
-    primaryColourLight: "#E8BBBE",
-    name: "Neighbor",
+    primaryColour: '#EA9093',
+    primaryColourLight: '#E8BBBE',
+    name: 'Neighbor',
   },
 };
 
@@ -32,13 +32,12 @@ type ToggleState = {
 export const useToggleStore = create<ToggleState, any>(
   persist<ToggleState>(
     (set, get) => ({
-      primaryColourLight: stateApp["B"].primaryColourLight,
-      primaryColour: stateApp["B"].primaryColour,
-      name: stateApp["B"].name,
+      primaryColourLight: stateApp['B'].primaryColourLight,
+      primaryColour: stateApp['B'].primaryColour,
+      name: stateApp['B'].name,
       toggleState: () => {
         set((state) => {
-          const nextStateKey =
-            get().primaryColour === stateApp["B"].primaryColour ? "N" : "B";
+          const nextStateKey = get().primaryColour === stateApp['B'].primaryColour ? 'N' : 'B';
           const nextState = stateApp[nextStateKey];
           return {
             primaryColourLight: nextState.primaryColourLight,
@@ -49,10 +48,10 @@ export const useToggleStore = create<ToggleState, any>(
       },
     }),
     {
-      name: "toggleApp",
+      name: 'toggleApp',
       storage: createJSONStorage(() => AsyncStorage),
-    },
-  ),
+    }
+  )
 );
 
 export default useToggleStore;
@@ -63,9 +62,9 @@ interface Icon {
   name: string;
 }
 
-export type IconName = (typeof icons)[number]["name"];
+export type IconName = (typeof icons)[number]['name'];
 
-export const typeform: IconName = "Client";
+export const typeform: IconName = 'Client';
 
 type stateForm = {
   IconName: IconName;
@@ -75,13 +74,13 @@ type stateForm = {
 export const useTypeForm = create<stateForm, any>(
   persist(
     (set, get) => ({
-      IconName: "Annonce",
+      IconName: 'Annonce',
       switchForm: (value: IconName) => {
         set({ IconName: value });
       },
     }),
-    { name: "formType", storage: createJSONStorage(() => AsyncStorage) },
-  ),
+    { name: 'formType', storage: createJSONStorage(() => AsyncStorage) }
+  )
 );
 
 //////////////////////////////////////////////////////////////// ViewerParamImages ********************************
@@ -118,5 +117,31 @@ export const useMenuDiscussionIsOpen = create<MenuDiscussionIsOpen>((set) => ({
   ctxMenu: false,
   toggleValue() {
     set((state) => ({ ctxMenu: !state.ctxMenu }));
+  },
+}));
+
+//////////////////////////////////////////////////////////////ModalTimeSurvey////////////////////////////
+
+type ModalTimeSurvey = {
+  modalTimeSurvey: boolean;
+  setModalTimeSurvey: (value: boolean) => void;
+};
+
+export const useModalTimeSurvey = create<ModalTimeSurvey>((set) => ({
+  modalTimeSurvey: false,
+  setModalTimeSurvey(value: boolean) {
+    set({ modalTimeSurvey: value });
+  },
+}));
+
+type DaysSurveySchema = {
+  daysSurvey: number;
+  setDaysSurvey: (value: number) => void;
+};
+
+export const useDaysSurvey = create<DaysSurveySchema>((set) => ({
+  daysSurvey: 1,
+  setDaysSurvey(value: number) {
+    set({ daysSurvey: value });
   },
 }));

@@ -1,50 +1,31 @@
-import React, { useCallback, useState } from 'react';
-import { useColorScheme } from 'react-native';
+import React, { useEffect } from 'react';
+import { useColorScheme, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Text, View } from '../../components/Themed';
+import { View } from '../../components/Themed';
 import Colors from '../../constants/Colors';
-import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
-import { horizontalScale, moderateScale, shadow, verticalScale } from '../../Utilis/metrics';
+import Animated from 'react-native-reanimated';
+import { horizontalScale, moderateScale, verticalScale } from '../../Utilis/metrics';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { Image } from 'expo-image';
-import { MEDIUM_PIC_USER, formTextPlaceholder } from '../../constants/Value';
-import { TextThin } from '../../components/StyledText';
+import { formTextPlaceholder, MEDIUM_PIC_USER } from '../../constants/Value';
 import DefaultForm from '../../components/form/defaultForm';
 import SurveyForm from '../../components/form/SurveyForm';
 import useToggleStore, { useTypeForm } from '../../store/preference';
-import { useRouter } from 'expo-router';
+import { usePathname, useRouter } from 'expo-router';
+import TimePickerSurvey from '../../components/modal/TimePickerSurvey';
 
 const post = () => {
   const colorScheme = useColorScheme();
 
-  const isExpanded = useSharedValue(false);
   const route = useRouter();
   const { primaryColourLight } = useToggleStore((state) => state);
 
   const { IconName } = useTypeForm((state) => state);
-
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      justifyContent: isExpanded.value ? 'center' : 'center',
-    };
-  }, [isExpanded]);
-
-  const toggleViewHeight = useCallback(() => {
-    isExpanded.value = !isExpanded.value;
-  }, [isExpanded.value]);
-
-  const viewStyle = useAnimatedStyle(() => {
-    return {
-      display: isExpanded.value ? 'none' : 'flex',
-      marginVertical: isExpanded.value ? 0 : 20,
-    };
-  }, [isExpanded]);
-
-  const inputStyle = useAnimatedStyle(() => {
-    return {
-      display: isExpanded.value ? 'flex' : 'none',
-    };
-  }, [isExpanded]);
+  const refInput = React.useRef<TextInput>(null);
+  const { width } = useWindowDimensions();
+  useEffect(() => {
+    refInput.current?.focus();
+  }, [usePathname()]);
   return (
     <SafeAreaView
       style={{
@@ -52,35 +33,26 @@ const post = () => {
         backgroundColor: Colors[colorScheme ?? 'light'].background,
       }}
     >
-      <Animated.View
+      <View
         style={[
           {
-            // minHeight: verticalScale(116),
-            ...shadow(5),
             borderRadius: 25,
             backgroundColor: Colors[colorScheme ?? 'light'].background,
-            marginHorizontal: horizontalScale(10),
-            marginTop: verticalScale(25),
             gap: 5,
-            //  justifyContent: '',
-            // justifyContent: canComment ? "center" : "space-between",
-
             paddingHorizontal: horizontalScale(15),
-            overflow: 'hidden',
+            paddingTop: verticalScale(15),
           },
-          animatedStyle,
         ]}
       >
         <View
           style={{
             flexDirection: 'row',
             alignItems: 'center',
-            // paddingTop: verticalScale(10),
           }}
         >
           <TouchableOpacity
             style={{
-              alignSelf: 'center', // Centrer l'image verticalement
+              alignSelf: 'center',
             }}
             onPress={() => {
               route.push('profile');
@@ -101,40 +73,24 @@ const post = () => {
             />
           </TouchableOpacity>
 
-          <Animated.View style={[viewStyle, { flex: 1 }]}>
-            <TouchableOpacity
-              onPress={toggleViewHeight}
-              style={{
-                borderColor: '#1113',
-                borderWidth: 1,
-                height: MEDIUM_PIC_USER - 3,
-                flexDirection: 'row',
-                alignItems: 'center',
-                borderRadius: 20,
-              }}
-            >
-              <TextThin style={{ marginLeft: horizontalScale(15) }}>{formTextPlaceholder(IconName)}</TextThin>
-            </TouchableOpacity>
-          </Animated.View>
-
-          <Animated.View style={[inputStyle, { flex: 1 }]}>
+          <Animated.View style={[{ flex: 1 }]}>
             <TextInput
               multiline={true}
+              ref={refInput}
               placeholder={formTextPlaceholder(IconName)}
               style={{
-                borderColor: '#1113',
-                // height: verticalScale(100),
-                maxHeight: verticalScale(120),
-                fontFamily: 'ExtraLight',
-                // borderWidth: 1,
-                paddingVertical: verticalScale(20),
+                fontSize: moderateScale(16),
+                maxHeight: width * 0.4,
+                fontFamily: 'Light',
+                paddingVertical: verticalScale(5),
               }}
             />
           </Animated.View>
         </View>
-        <DefaultForm cancel={toggleViewHeight} isExpanded={isExpanded} />
-        <SurveyForm cancel={toggleViewHeight} isExpanded={isExpanded} />
-      </Animated.View>
+        <DefaultForm />
+        <SurveyForm />
+      </View>
+      <TimePickerSurvey />
     </SafeAreaView>
   );
 };

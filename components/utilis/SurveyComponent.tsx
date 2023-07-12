@@ -6,7 +6,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { TextLight } from '../StyledText';
 import { horizontalScale, moderateScale, verticalScale } from '../../Utilis/metrics';
 import { AntDesign, Entypo } from '@expo/vector-icons';
-import Animated, { runOnUI, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 
 const SurveyComponent = ({ dataSurvey }: { dataSurvey: SurveySchema | undefined }) => {
   if (!dataSurvey) return null;

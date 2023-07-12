@@ -16,6 +16,7 @@ import { LARGE_PIC_USER } from '../../constants/Value';
 import useToggleStore, { stateApp } from '../../store/preference';
 import Animated from 'react-native-reanimated';
 import MediaComponent from '../../components/utilis/MediaComponent';
+import { useRouter } from 'expo-router';
 
 const Profile = () => {
   const { width } = useWindowDimensions();
@@ -64,7 +65,7 @@ const Profile = () => {
   };
 
   const [mediaProfileState, setMediaProfileState] = useState(mediaProfile);
-
+  const router = useRouter();
   const handleMediaProfilePress = useCallback((key) => {
     setMediaProfileState((prevState) => {
       const newState = { ...prevState };
@@ -232,6 +233,21 @@ const Profile = () => {
           {iconActivity.map((icon, index) => (
             <TouchableOpacity
               key={index}
+              onPress={() => {
+                if (index === 0) {
+                  router.push('/groupActivity');
+                }
+
+                if (index === 1) {
+                  router.push('/');
+                }
+                if (index === 2) {
+                  router.push('/');
+                }
+                if (index === 3) {
+                  router.push('/');
+                }
+              }}
               style={[
                 {
                   width: width / 2.3,
