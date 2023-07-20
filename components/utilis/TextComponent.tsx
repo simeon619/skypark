@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { moderateScale } from "../../Utilis/metrics";
-import useToggleStore from "../../store/preference";
-import { TextLight, TextMedium, TextRegular } from "../StyledText";
-import { Poppins_400Regular as Regular } from "@expo-google-fonts/poppins";
+import React, { useEffect, useState } from 'react';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { moderateScale } from '../../Utilis/metrics';
+import useToggleStore from '../../store/preference';
+import { TextLight } from '../StyledText';
+import { View } from '../Themed';
 let EXCEED_LIMIT = 250;
-const TextComponent = ({ text }: { text: string |  undefined }) => {
-  if(!text) return null
+const TextComponent = ({ text }: { text: string | undefined }) => {
+  console.log('🚀 ~ file: TextComponent.tsx:9 ~ TextComponent ~ text:', text);
+  if (!text) return null;
   const [moreText, setMoreText] = useState(false);
   const [textIsExpandable, setTextIsExpandable] = useState(false);
   const { primaryColour } = useToggleStore((state) => state);
@@ -19,14 +20,12 @@ const TextComponent = ({ text }: { text: string |  undefined }) => {
     setTextIsExpandable(text.length > EXCEED_LIMIT);
   }, [text]);
   return (
-    <>
+    <View>
       <TextLight
-        numberOfLines={
-          textIsExpandable ? (moreText ? undefined : 3) : undefined
-        }
+        numberOfLines={textIsExpandable ? (moreText ? undefined : 3) : undefined}
         style={{
           fontSize: moderateScale(15),
-          color: "#000",
+          color: '#000',
           // textAlign: "left",
           // paddingHorizontal: horizontalScale(10),
         }}
@@ -35,14 +34,12 @@ const TextComponent = ({ text }: { text: string |  undefined }) => {
       </TextLight>
       {textIsExpandable && (
         <TouchableOpacity onPress={toggleMoreText}>
-          <TextLight
-            style={{ fontSize: moderateScale(15), color: primaryColour }}
-          >
-            {moreText ? "Voir Moins" : "Voir Plus"}
+          <TextLight style={{ fontSize: moderateScale(15), color: primaryColour }}>
+            {moreText ? 'Voir Moins' : 'Voir Plus'}
           </TextLight>
         </TouchableOpacity>
       )}
-    </>
+    </View>
   );
 };
 

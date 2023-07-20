@@ -1,7 +1,8 @@
 export const PostType = {
-  TEXT: '0',
-  T_MEDIA: '1',
-  SURVEY: '2',
+  TEXT: '1',
+  T_MEDIA: '2',
+  SURVEY: '3',
+  GROUP_JOIN: '4',
 };
 
 export interface User {
@@ -16,13 +17,19 @@ export interface StatPostSchema {
   shares: number;
 }
 export interface SurveySchema {
-  options: {id : number; label: string , votes : number}[];
-  totalVotes: number;}
+  options: { id: number; label: string; votes: number }[];
+  totalVotes: number;
+}
+export interface groupJoinedSchema {
+  pic: string;
+  name: string;
+  banner: string;
+}
 export interface ContentSchema {
-  
   text?: string;
   media?: string[];
-  survey?: SurveySchema
+  survey?: SurveySchema;
+  groupJoin?: groupJoinedSchema;
 }
 
 export interface PostSchema {

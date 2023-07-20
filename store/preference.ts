@@ -119,18 +119,17 @@ export const useMenuDiscussionIsOpen = create<MenuDiscussionIsOpen>((set) => ({
     set((state) => ({ ctxMenu: !state.ctxMenu }));
   },
 }));
-
 //////////////////////////////////////////////////////////////ModalTimeSurvey////////////////////////////
 
 type ModalTimeSurvey = {
-  modalTimeSurvey: boolean;
-  setModalTimeSurvey: (value: boolean) => void;
+  blurSurvey: 0 | 1;
+  setBlurSurvey: (value: 0 | 1) => void;
 };
 
-export const useModalTimeSurvey = create<ModalTimeSurvey>((set) => ({
-  modalTimeSurvey: false,
-  setModalTimeSurvey(value: boolean) {
-    set({ modalTimeSurvey: value });
+export const useBlurSurvey = create<ModalTimeSurvey>((set) => ({
+  blurSurvey: 0,
+  setBlurSurvey(value: 0 | 1) {
+    set({ blurSurvey: value });
   },
 }));
 

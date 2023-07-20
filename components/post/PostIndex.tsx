@@ -2,15 +2,15 @@ import { FlashList } from '@shopify/flash-list';
 import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, useWindowDimensions } from 'react-native';
 import { moderateScale } from '../../Utilis/metrics';
-import POST_ITEM from '../../post.json';
 import { PostSchema, PostType } from '../../types/PostType';
 import { TextMedium } from '../StyledText';
 import { View } from '../Themed';
+import PostJoined from './PostJoined';
 import PostMedia from './PostMedia';
-import PostText from './PostText';
 import PostSurvey from './PostSurvey';
+import PostText from './PostText';
 
-const PostIndex = () => {
+const PostIndex = ({ DATA }: { DATA: PostSchema[] }) => {
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
@@ -53,6 +53,8 @@ const PostIndex = () => {
         return <PostMedia dataPost={item} />;
       case PostType.SURVEY:
         return <PostSurvey dataPost={item} />;
+      case PostType.GROUP_JOIN:
+        return <PostJoined dataPost={item} />;
       default:
         return <TextMedium style={{ fontSize: moderateScale(40) }}>ERROR</TextMedium>;
     }
@@ -63,7 +65,7 @@ const PostIndex = () => {
       onLoad={(time) => {
         console.log(time);
       }}
-      data={POST_ITEM}
+      data={DATA}
       renderItem={renderItem}
       estimatedItemSize={height * 0.3}
       keyExtractor={(item, index) => item.id.toString()}

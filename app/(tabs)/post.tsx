@@ -1,28 +1,28 @@
-import React, { useEffect } from 'react';
-import { useColorScheme, useWindowDimensions } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { View } from '../../components/Themed';
-import Colors from '../../constants/Colors';
-import Animated from 'react-native-reanimated';
-import { horizontalScale, moderateScale, verticalScale } from '../../Utilis/metrics';
-import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import { BlurView } from 'expo-blur';
 import { Image } from 'expo-image';
-import { formTextPlaceholder, MEDIUM_PIC_USER } from '../../constants/Value';
-import DefaultForm from '../../components/form/defaultForm';
-import SurveyForm from '../../components/form/SurveyForm';
-import useToggleStore, { useTypeForm } from '../../store/preference';
 import { usePathname, useRouter } from 'expo-router';
-import TimePickerSurvey from '../../components/modal/TimePickerSurvey';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, useColorScheme, useWindowDimensions } from 'react-native';
+import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { horizontalScale, moderateScale, shadow, verticalScale } from '../../Utilis/metrics';
+import { View } from '../../components/Themed';
+import SurveyForm from '../../components/form/SurveyForm';
+import DefaultForm from '../../components/form/defaultForm';
+import Colors from '../../constants/Colors';
+import { MEDIUM_PIC_USER, formTextPlaceholder } from '../../constants/Value';
+import useToggleStore, { useBlurSurvey, useTypeForm } from '../../store/preference';
 
 const post = () => {
   const colorScheme = useColorScheme();
-
+  const [heightInput, setHeightInput] = useState(40);
   const route = useRouter();
   const { primaryColourLight } = useToggleStore((state) => state);
-
+  const { blurSurvey } = useBlurSurvey((state) => state);
   const { IconName } = useTypeForm((state) => state);
   const refInput = React.useRef<TextInput>(null);
-  const { width } = useWindowDimensions();
+
+  const { width, height } = useWindowDimensions();
   useEffect(() => {
     refInput.current?.focus();
   }, [usePathname()]);
@@ -33,21 +33,24 @@ const post = () => {
         backgroundColor: Colors[colorScheme ?? 'light'].background,
       }}
     >
+      <BlurView style={[{ zIndex: blurSurvey }, StyleSheet.absoluteFill]} />
       <View
         style={[
           {
             borderRadius: 25,
             backgroundColor: Colors[colorScheme ?? 'light'].background,
-            gap: 5,
-            paddingHorizontal: horizontalScale(15),
+            marginHorizontal: horizontalScale(15),
+            marginTop: verticalScale(15),
             paddingTop: verticalScale(15),
+            ...shadow(5),
+            overflow: 'hidden',
           },
         ]}
       >
         <View
           style={{
             flexDirection: 'row',
-            alignItems: 'center',
+            alignItems: 'flex-start',
           }}
         >
           <TouchableOpacity
@@ -62,35 +65,44 @@ const post = () => {
               style={{
                 width: moderateScale(MEDIUM_PIC_USER),
                 aspectRatio: 1,
-                marginHorizontal: moderateScale(10),
+                marginHorizontal: moderateScale(5),
                 borderRadius: MEDIUM_PIC_USER / 2,
                 borderColor: primaryColourLight,
                 borderWidth: 3,
               }}
               source="https://picsum.photos/seed/696/3000/2000"
               contentFit="cover"
-              transition={1000}
+              transition={250}
             />
           </TouchableOpacity>
 
-          <Animated.View style={[{ flex: 1 }]}>
-            <TextInput
-              multiline={true}
-              ref={refInput}
-              placeholder={formTextPlaceholder(IconName)}
-              style={{
-                fontSize: moderateScale(16),
-                maxHeight: width * 0.4,
-                fontFamily: 'Light',
-                paddingVertical: verticalScale(5),
-              }}
-            />
-          </Animated.View>
+          <TextInput
+            multiline={true}
+            numberOfLines={2}
+            onContentSizeChange={(e) => {
+              setHeightInput(e.nativeEvent.contentSize.height);
+            }}
+            ref={refInput}
+            textAlignVertical="bottom"
+            placeholder={formTextPlaceholder(IconName)}
+            style={{
+              fontSize: moderateScale(15),
+              height: heightInput,
+              maxHeight: height * 0.3,
+              width: width * 0.7,
+              fontFamily: 'Light',
+              borderWidth: 1,
+              borderColor: '#1113',
+              paddingHorizontal: horizontalScale(20),
+              paddingVertical: verticalScale(10),
+              borderRadius: moderateScale(50),
+            }}
+          />
         </View>
         <DefaultForm />
         <SurveyForm />
       </View>
-      <TimePickerSurvey />
+      {/* <TimePickerSurvey /> */}
     </SafeAreaView>
   );
 };

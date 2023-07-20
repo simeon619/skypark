@@ -1,14 +1,23 @@
 //@ts-nocheck
-import { View, Text } from 'react-native';
+import { AntDesign } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { SurveySchema } from '../../types/PostType';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { TextLight } from '../StyledText';
-import { horizontalScale, moderateScale, verticalScale } from '../../Utilis/metrics';
-import { AntDesign, Entypo } from '@expo/vector-icons';
-import Animated from 'react-native-reanimated';
 
-const SurveyComponent = ({ dataSurvey }: { dataSurvey: SurveySchema | undefined }) => {
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import Animated from 'react-native-reanimated';
+import { horizontalScale, moderateScale, shadow, verticalScale } from '../../Utilis/metrics';
+import { SurveySchema } from '../../types/PostType';
+import { TextLight } from '../StyledText';
+import { View } from '../Themed';
+import TextComponent from './TextComponent';
+
+const SurveyComponent = ({
+  dataSurvey,
+  question,
+}: {
+  dataSurvey: SurveySchema | undefined;
+  question: string | undefined;
+}) => {
+  console.log('🚀 ~ file: SurveyComponent.tsx:14 ~ SurveyComponent ~ dataSurvey:', dataSurvey);
   if (!dataSurvey) return null;
 
   //ici on aura plus tard une liste venant du serveur qui renvera true ou false en fonction de si l'user a voté ou non
@@ -17,9 +26,8 @@ const SurveyComponent = ({ dataSurvey }: { dataSurvey: SurveySchema | undefined 
 
   const handleVote = (item: any) => {
     if (!hasVoted) {
-      // setHasVoted(true);
+      setHasVoted(true);
 
-      // Crée une nouvelle copie de l'objet d'état avec les modifications nécessaires
       const updatedOptions = [...dataSurveyA.options];
       const index = updatedOptions.findIndex((option) => option.id === item.id);
       if (index !== -1) {
@@ -31,19 +39,29 @@ const SurveyComponent = ({ dataSurvey }: { dataSurvey: SurveySchema | undefined 
   };
 
   return (
-    <View style={{ flex: 1, rowGap: horizontalScale(7) }}>
+    <View
+      style={{
+        flex: 1,
+        rowGap: horizontalScale(7),
+        ...shadow(1),
+        borderColor: '#0001',
+        borderWidth: 1,
+        borderRadius: 15,
+        overflow: 'hidden',
+        padding: moderateScale(10),
+      }}
+    >
+      <TextComponent text={question} />
       {dataSurveyA.options.map((item, index) => {
         console.log(item, dataSurveyA.totalVotes);
         let percentage = ((item.votes * 100) / dataSurveyA.totalVotes).toFixed(1);
         percentage = percentage === 'NaN' ? '0' : percentage;
         return (
-          <TouchableOpacity
-            key={index}
-            onPress={() => handleVote(item)}
-            style={{ borderBottomColor: '#3F21B822', borderBottomWidth: 1, paddingBottom: verticalScale(10) }}
-          >
+          <TouchableOpacity key={index} onPress={() => handleVote(item)} style={{ paddingVertical: verticalScale(0) }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', columnGap: horizontalScale(10) }}>
-              <TextLight style={{ fontSize: moderateScale(16), color: '#777' }}>{percentage} %</TextLight>
+              {hasVoted ? (
+                <TextLight style={{ fontSize: moderateScale(16), color: '#777' }}>{percentage} %</TextLight>
+              ) : null}
               <TextLight style={{ fontSize: moderateScale(15) }}>{item.label}</TextLight>
             </View>
             <View
@@ -56,15 +74,16 @@ const SurveyComponent = ({ dataSurvey }: { dataSurvey: SurveySchema | undefined 
             >
               <View
                 style={{
-                  width: 20,
+                  width: moderateScale(17),
                   aspectRatio: 1,
+                  borderWidth: 1,
                   borderRadius: 50,
-                  backgroundColor: '#3F21B8',
+                  backgroundColor: hasVoted ? '#3F21B8' : '#3F21B800',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
               >
-                <Entypo name="check" size={moderateScale(15)} color="white" />
+                {hasVoted ? <AntDesign name="check" size={moderateScale(15)} color="white" /> : null}
               </View>
               <Animated.View
                 style={{
@@ -78,7 +97,10 @@ const SurveyComponent = ({ dataSurvey }: { dataSurvey: SurveySchema | undefined 
           </TouchableOpacity>
         );
       })}
-      <TextLight style={{ fontSize: moderateScale(15) }}> Votes: {dataSurveyA.totalVotes}</TextLight>
+
+      <TextLight style={{ fontSize: moderateScale(15), opacity: hasVoted ? 1 : 0 }}>
+        {dataSurveyA.totalVotes} vote{dataSurveyA.totalVotes > 1 ? 's' : ''}{' '}
+      </TextLight>
     </View>
   );
 };

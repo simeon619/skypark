@@ -1,35 +1,64 @@
-import { Image } from "expo-image";
-import React from "react";
-import { View, useColorScheme, useWindowDimensions } from "react-native";
-import { formatPostDate } from "../../Utilis/date";
-import {
-  horizontalScale,
-  moderateScale,
-  verticalScale,
-} from "../../Utilis/metrics";
-import Colors from "../../constants/Colors";
-import { MEDIUM_PIC_USER } from "../../constants/Value";
-import { User } from "../../types/PostType";
-import { TextLight, TextMedium, TextRegular } from "../StyledText";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { Image } from 'expo-image';
+import React from 'react';
+import { useColorScheme, useWindowDimensions } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { formatPostDate } from '../../Utilis/date';
+import { horizontalScale, moderateScale, verticalScale } from '../../Utilis/metrics';
+import Colors from '../../constants/Colors';
+import { MEDIUM_PIC_USER } from '../../constants/Value';
+import { ContentSchema, User } from '../../types/PostType';
+import { TextLight, TextMedium, TextRegular } from '../StyledText';
+import { View } from '../Themed';
 
-const PostHeader = ({ date, user }: { date: Date; user: User }) => {
+const PostHeader = ({
+  date,
+  user,
+  type,
+  content,
+}: {
+  date: Date;
+  user: User;
+  type: string;
+  content: ContentSchema;
+}) => {
   const { width } = useWindowDimensions();
   const colorScheme = useColorScheme();
+  const typePost = (type: string) => {
+    console.log('🚀 ~ file: PostHeader.tsx:26 ~ typePost ~ type:', type);
+    if (type === '1') {
+      return 'a postez un avis';
+    }
+    if (type === '2') {
+      return 'a postez un media';
+    }
+    if (type === '3') {
+      return 'a postez un sondage';
+    }
+    if (type === '4') {
+      content.groupJoin?.name;
+      return (
+        <TextLight>
+          <TextLight style={{ color: Colors[colorScheme ?? 'light'].greyDark }}>a rejoint le groupe </TextLight>{' '}
+          <TextMedium>{content.groupJoin?.name}</TextMedium>{' '}
+        </TextLight>
+      );
+    }
+  };
+
   return (
     <View
       style={{
         flex: 1,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         paddingVertical: verticalScale(10),
       }}
     >
       <View
         style={{
-          flexDirection: "row",
-          alignItems: "center",
+          flexDirection: 'row',
+          alignItems: 'center',
           flex: 1,
           columnGap: horizontalScale(7),
         }}
@@ -40,41 +69,40 @@ const PostHeader = ({ date, user }: { date: Date; user: User }) => {
             width: horizontalScale(MEDIUM_PIC_USER),
             aspectRatio: 1,
             borderRadius: 90,
+            alignSelf: 'flex-start',
           }}
           transition={100}
         />
         <View style={{ flex: 1 }}>
           <View
             style={{
-              flexDirection: "row",
+              flexDirection: 'row',
               flex: 1,
               columnGap: horizontalScale(7),
             }}
           >
-            <View style={{ flexShrink: 1 }}>
+            <View style={{ flexShrink: 0, alignSelf: 'flex-start' }}>
               <TextLight
-                numberOfLines={1}
-                style={{ fontSize: moderateScale(16) }}
-              >
-                {user.username}
-              </TextLight>
-            </View>
-            <View style={{ flex: 0, alignSelf: "flex-start" }}>
-              <TextLight
-                numberOfLines={1}
+                numberOfLines={2}
                 style={{
-                  color: Colors[colorScheme ?? "light"].greyDark,
+                  color: Colors[colorScheme ?? 'light'].greyDark,
                   fontSize: moderateScale(15),
                   paddingTop: horizontalScale(1),
                 }}
               >
-                Publiez
+                <TextLight
+                  numberOfLines={1}
+                  style={{ color: Colors[colorScheme ?? 'light'].text, fontSize: moderateScale(15) }}
+                >
+                  {user.username.length > 20 ? `${user.username.slice(0, 20)}...` : user.username}
+                </TextLight>{' '}
+                {typePost(type)}
               </TextLight>
             </View>
           </View>
           <TextRegular
             style={{
-              color: Colors[colorScheme ?? "light"].greyDark,
+              color: Colors[colorScheme ?? 'light'].greyDark,
               fontSize: moderateScale(14),
             }}
           >
@@ -84,7 +112,7 @@ const PostHeader = ({ date, user }: { date: Date; user: User }) => {
       </View>
       <TouchableOpacity style={{ marginLeft: horizontalScale(5) }}>
         <Image
-          source={require("../../assets/images/telepĥone.png")}
+          source={require('../../assets/images/telepĥone.png')}
           style={{ width: moderateScale(35), aspectRatio: 1 }}
           transition={100}
         />

@@ -1,19 +1,18 @@
-import React, { memo } from 'react';
+import React from 'react';
 import { PostSchema } from '../../types/PostType';
 import { View } from '../Themed';
-import MediaComponent from '../utilis/MediaComponent';
-import TextComponent from '../utilis/TextComponent';
+import JoinedGroupComponent from '../utilis/JoinedGroupComponent';
 import PostFooter from './PostFooter';
 import PostHeader from './PostHeader';
 
-const PostMedia = ({ dataPost }: { dataPost: PostSchema }) => {
+const PostJoined = ({ dataPost }: { dataPost: PostSchema }) => {
   return (
     <View style={{ flex: 1 }}>
       <PostHeader date={dataPost.createdAt} user={dataPost.user} type={dataPost.type} content={dataPost.content} />
-      <TextComponent text={dataPost.content.text} />
-      <MediaComponent media={dataPost.content.media} />
+      <JoinedGroupComponent item={dataPost.content.groupJoin} />
       <PostFooter stat={dataPost.statPost} />
     </View>
   );
 };
-export default memo(PostMedia);
+
+export default PostJoined;

@@ -4,8 +4,8 @@
     "type": "2",
     "user": {
       "id": 1,
-      "username": "utilisateur1",
-      "avatar": "https://picsum.photos/400"
+      "username": "Andy",
+      "avatar": "https://picsum.photos/200"
     },
     "content": {
       "text": "Lorem Ipsum is simply dummy text...",
@@ -25,34 +25,17 @@
   },
   {
     "id": 56,
-    "type": "3",
+    "type": "4",
     "user": {
       "id": 15,
-      "username": "utilisateur6",
-      "avatar": "https://picsum.photos/296"
+      "username": "Andy",
+      "avatar": "https://picsum.photos/200"
     },
     "content": {
-      "text": "Quelle est votre couleur préférée ?",
-      "media": ["https://picsum.photos/1850/1300"],
-      "survey": {
-        "options": [
-          {
-            "id": 1,
-            "label": "Bleu",
-            "votes": 0
-          },
-          {
-            "id": 2,
-            "label": "Rouge",
-            "votes": 0
-          },
-          {
-            "id": 3,
-            "label": "Vert",
-            "votes": 0
-          }
-        ],
-        "totalVotes": 0
+      "groupJoin": {
+        "name": "Fortnite",
+        "banner": "https://picsum.photos/1850/1800",
+        "pic": "https://picsum.photos/180"
       }
     },
     "createdAt": "2023-07-09T13:09:00Z",
@@ -67,8 +50,8 @@
     "type": "1",
     "user": {
       "id": 2,
-      "username": "utilisateur2  efefe f e efe fe f",
-      "avatar": "https://picsum.photos/240"
+      "username": "Andy",
+      "avatar": "https://picsum.photos/200"
     },
     "content": { "text": "Another post...", "media": [] },
 
@@ -84,7 +67,7 @@
     "type": "2",
     "user": {
       "id": 3,
-      "username": "utilisateur3",
+      "username": "Andy",
       "avatar": "https://picsum.photos/200"
     },
     "content": { "text": "Another post...", "media": ["https://picsum.photos/1500/1800"] },
@@ -100,7 +83,7 @@
     "type": "1",
     "user": {
       "id": 4,
-      "username": "utilisateur4",
+      "username": "Andy",
       "avatar": "https://picsum.photos/200"
     },
     "content": { "text": "Another post...", "media": [] },
@@ -116,8 +99,8 @@
     "type": "2",
     "user": {
       "id": 5,
-      "username": "utilisateur5",
-      "avatar": "https://picsum.photos/210"
+      "username": "Andy",
+      "avatar": "https://picsum.photos/200"
     },
     "content": {
       "text": "Some more Lorem Ipsum...",

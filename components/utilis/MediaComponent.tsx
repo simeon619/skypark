@@ -1,6 +1,8 @@
-import { DimensionValue, useWindowDimensions } from 'react-native';
+import { useRouter } from 'expo-router';
 import React, { memo } from 'react';
-import { Image } from 'expo-image';
+import { DimensionValue, useWindowDimensions } from 'react-native';
+import { TouchableHighlight } from 'react-native-gesture-handler';
+import Animated from 'react-native-reanimated';
 import { horizontalScale, verticalScale } from '../../Utilis/metrics';
 import { View } from '../Themed';
 import ShadowImage from './ShadowImage';
@@ -10,19 +12,21 @@ const MediaComponent = ({ media }: { media: string[] | undefined }) => {
   if (!media) {
     return null;
   }
-
+  const router = useRouter();
   const numberMedia = media?.length;
 
   const ImageComponent = ({ uri, width, height }: { uri: string; width: DimensionValue; height: DimensionValue }) => {
     return (
-      <Image
-        style={{ width, height }}
-        source={{ uri }}
-        priority={'high'}
-        transition={0}
-        allowDownscaling={true}
-        cachePolicy={'memory-disk'}
-      />
+      <TouchableHighlight onPress={() => router.push({ pathname: 'modal/FormViewerImage', params: { uri } })}>
+        <Animated.Image
+          style={{ width, height }}
+          source={{ uri }}
+          // priority={'high'}
+          // transition={0}
+          // allowDownscaling={true}
+          // cachePolicy={'memory-disk'}
+        />
+      </TouchableHighlight>
     );
   };
 
@@ -38,16 +42,14 @@ const MediaComponent = ({ media }: { media: string[] | undefined }) => {
       )}
       {numberMedia === 2 && (
         <View style={{ flexDirection: 'row', columnGap: horizontalScale(GAP_MEDIA) }}>
-          <ShadowImage
-            ratioHeight={1}
-            ratioWidth={48.5}
-            children={<ImageComponent uri={media[0]} width={'100%'} height={'100%'} />}
-          />
-          <ShadowImage
-            ratioHeight={1}
-            ratioWidth={48.5}
-            children={<ImageComponent uri={media[1]} width={'100%'} height={'100%'} />}
-          />
+          {[0, 1].map((index) => (
+            <ShadowImage
+              key={index}
+              ratioHeight={1}
+              ratioWidth={48.5}
+              children={<ImageComponent uri={media[index]} width={'100%'} height={'100%'} />}
+            />
+          ))}
         </View>
       )}
       {numberMedia === 3 && (
@@ -59,11 +61,10 @@ const MediaComponent = ({ media }: { media: string[] | undefined }) => {
           }}
         >
           <ShadowImage
-            ratioHeight={2}
+            ratioHeight={1.4}
             ratioWidth={100}
-            children={<ImageComponent uri={media[0]} width={'100%'} height={height * 0.2} />}
+            children={<ImageComponent uri={media[0]} width={'100%'} height={'100%'} />}
           />
-
           <View
             style={{
               flexDirection: 'row',
@@ -71,16 +72,14 @@ const MediaComponent = ({ media }: { media: string[] | undefined }) => {
               columnGap: horizontalScale(GAP_MEDIA),
             }}
           >
-            <ShadowImage
-              ratioHeight={2}
-              ratioWidth={48.5}
-              children={<ImageComponent uri={media[1]} width={'100%'} height={height * 0.2} />}
-            />
-            <ShadowImage
-              ratioHeight={2}
-              ratioWidth={48.5}
-              children={<ImageComponent uri={media[2]} width={'100%'} height={height * 0.2} />}
-            />
+            {[1, 2].map((index) => (
+              <ShadowImage
+                key={index}
+                ratioHeight={2}
+                ratioWidth={48.5}
+                children={<ImageComponent uri={media[index]} width={'100%'} height={'100%'} />}
+              />
+            ))}
           </View>
         </View>
       )}
@@ -88,9 +87,9 @@ const MediaComponent = ({ media }: { media: string[] | undefined }) => {
       {numberMedia === 4 && (
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', rowGap: verticalScale(GAP_MEDIA) }}>
           <ShadowImage
-            ratioHeight={2}
+            ratioHeight={1.4}
             ratioWidth={100}
-            children={<ImageComponent uri={media[0]} width={'100%'} height={height * 0.2} />}
+            children={<ImageComponent uri={media[0]} width={'100%'} height={'100%'} />}
           />
           <View
             style={{
@@ -99,21 +98,14 @@ const MediaComponent = ({ media }: { media: string[] | undefined }) => {
               columnGap: horizontalScale(GAP_MEDIA),
             }}
           >
-            <ShadowImage
-              ratioHeight={2}
-              ratioWidth={31.5}
-              children={<ImageComponent uri={media[1]} width={'100%'} height={height * 0.2} />}
-            />
-            <ShadowImage
-              ratioHeight={2}
-              ratioWidth={31.5}
-              children={<ImageComponent uri={media[2]} width={'100%'} height={height * 0.2} />}
-            />
-            <ShadowImage
-              ratioHeight={2}
-              ratioWidth={31.5}
-              children={<ImageComponent uri={media[3]} width={'100%'} height={height * 0.2} />}
-            />
+            {[1, 2, 3].map((index) => (
+              <ShadowImage
+                key={index}
+                ratioHeight={2.5}
+                ratioWidth={31.5}
+                children={<ImageComponent uri={media[index]} width={'100%'} height={'100%'} />}
+              />
+            ))}
           </View>
         </View>
       )}

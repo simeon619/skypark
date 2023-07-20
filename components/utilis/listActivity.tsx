@@ -14,22 +14,28 @@ import ShadowImage from './ShadowImage';
 
 const ListActivity = () => {
   const colorScheme = useColorScheme();
-  const { primaryColour, primaryColourLight, name } = useToggleStore((state) => state);
+  const { primaryColour } = useToggleStore((state) => state);
   const { width } = useWindowDimensions();
   return (
     <View style={{ paddingHorizontal: horizontalScale(10), marginTop: verticalScale(25) }}>
       {Groups.map((item, index) => {
         return (
           <View
+            lightColor={'#efefef'}
             key={index}
             style={{
-              ...shadow(5),
+              ...shadow(1),
               marginBottom: verticalScale(25),
               padding: moderateScale(20),
               borderRadius: moderateScale(20),
             }}
           >
-            <View style={{ marginBottom: verticalScale(LARGE_PIC_USER / 2) }}>
+            <View
+              lightColor={'#efefef'}
+              style={{
+                marginBottom: verticalScale(LARGE_PIC_USER / 2),
+              }}
+            >
               <ShadowImage
                 ratioHeight={2.8}
                 ratioWidth={100}
@@ -52,7 +58,14 @@ const ListActivity = () => {
                 }}
               />
             </View>
-            <View style={{ alignItems: 'center', rowGap: verticalScale(5) }}>
+            <View
+              lightColor={'#efefef'}
+              style={{
+                alignItems: 'center',
+                rowGap: verticalScale(5),
+                // backgroundColor: Colors[colorScheme ?? 'light'].lightGrey,
+              }}
+            >
               <TextMedium style={{ fontSize: moderateScale(16), textAlign: 'center' }}>{item.name}</TextMedium>
               <TextLight
                 style={{
@@ -63,7 +76,14 @@ const ListActivity = () => {
               >
                 Derniere activite : {formatPostDate(item.info.lastActivity)}
               </TextLight>
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: Colors[colorScheme ?? 'light'].lightGrey,
+                }}
+              >
                 {item.users.map((user, index) => (
                   <Image
                     key={index}
@@ -100,7 +120,9 @@ const ListActivity = () => {
                   paddingHorizontal: horizontalScale(10),
                 }}
               >
-                <TextLight style={{ fontSize: moderateScale(16), textAlign: 'center' }}>Quitter le groupe</TextLight>
+                <TextLight style={{ fontSize: moderateScale(16), textAlign: 'center', color: primaryColour }}>
+                  Quitter le groupe
+                </TextLight>
               </TouchableOpacity>
             </View>
           </View>

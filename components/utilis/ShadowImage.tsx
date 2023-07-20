@@ -1,7 +1,7 @@
 import React from 'react';
 import { moderateScale, shadow } from '../../Utilis/metrics';
-import { View } from '../Themed';
-import { useWindowDimensions } from 'react-native';
+
+import { View, useWindowDimensions } from 'react-native';
 
 const ShadowImage = ({
   children,

@@ -1,22 +1,20 @@
 //@ts-nocheck
-import { FontAwesome } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { StatusBar } from 'expo-status-bar';
 import React, { useCallback, useState } from 'react';
 
-import { ImageBackground, TouchableOpacity, useColorScheme, useWindowDimensions } from 'react-native';
+import { useRouter } from 'expo-router';
+import { ImageBackground, Pressable, TouchableOpacity, useColorScheme, useWindowDimensions } from 'react-native';
+import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Toggle from 'react-native-toggle-element';
 import { icons } from '../../Utilis/data';
 import { horizontalScale, moderateScale, shadow, verticalScale } from '../../Utilis/metrics';
 import { TextLight, TextMedium, TextRegular, TextSemiBold, TextThinItalic } from '../../components/StyledText';
 import { ScrollView, View } from '../../components/Themed';
+import MediaComponent from '../../components/utilis/MediaComponent';
 import Colors from '../../constants/Colors';
 import { LARGE_PIC_USER } from '../../constants/Value';
-import useToggleStore, { stateApp } from '../../store/preference';
-import Animated from 'react-native-reanimated';
-import MediaComponent from '../../components/utilis/MediaComponent';
-import { useRouter } from 'expo-router';
+import useToggleStore from '../../store/preference';
 
 const Profile = () => {
   const { width } = useWindowDimensions();
@@ -64,6 +62,12 @@ const Profile = () => {
     },
   };
 
+  const switchBat = useAnimatedStyle(() => {
+    return {
+      // transform: [{ scale: toggleValue ? 1 : 0 }],
+      //  flexDirection: name === 'Neighbor' ? 'row' : 'row-reverse',
+    };
+  });
   const [mediaProfileState, setMediaProfileState] = useState(mediaProfile);
   const router = useRouter();
   const handleMediaProfilePress = useCallback((key) => {
@@ -164,27 +168,35 @@ const Profile = () => {
           ></View>
         </ImageBackground>
         <View style={{ marginTop: horizontalScale(166 / 2), alignItems: 'center' }}>
-          <Toggle
-            value={toggleValue}
-            onPress={() => toggleState()}
-            leftComponent={<FontAwesome name="home" size={24} />}
-            rightComponent={<FontAwesome name="building" size={24} />}
-            trackBar={{
-              activeBackgroundColor: primaryColour,
-              inActiveBackgroundColor:
-                stateApp['B'].primaryColour !== primaryColour ? primaryColour : stateApp['B'].primaryColour,
-              width: horizontalScale(110),
-              height: verticalScale(48),
-            }}
-            thumbButton={{
-              width: 40,
-              height: 40,
-              radius: 20,
-              activeBackgroundColor: '#fff',
-              inActiveBackgroundColor: '#fff',
-            }}
-          />
-          <TextMedium>{name}</TextMedium>
+          <Pressable style={{ backgroundColor: 'transparent' }} onPress={() => toggleState()}>
+            <Animated.View
+              style={[
+                //   switchBat,
+                {
+                  flexDirection: name === 'Neighbor' ? 'row' : 'row-reverse',
+                  backgroundColor: primaryColour,
+                  paddingVertical: verticalScale(3),
+                  paddingRight: horizontalScale(10),
+                  paddingLeft: horizontalScale(2),
+                  borderRadius: moderateScale(100),
+                  ...shadow(10),
+                  alignItems: 'center',
+                  columnGap: horizontalScale(10),
+                },
+              ]}
+            >
+              <View
+                style={{
+                  width: horizontalScale(35),
+                  aspectRatio: 1,
+                  borderRadius: 100,
+                  // alignItems: 'center',
+                  backgroundColor: Colors[colorScheme ?? 'light'].background,
+                }}
+              />
+              <TextLight style={{ fontSize: moderateScale(17), marginTop: verticalScale(3) }}>{name}</TextLight>
+            </Animated.View>
+          </Pressable>
         </View>
         <View
           style={{
@@ -221,11 +233,8 @@ const Profile = () => {
             flexDirection: 'row',
             flexWrap: 'wrap',
             justifyContent: 'center',
-
             marginTop: verticalScale(10),
-
             marginVertical: verticalScale(15),
-
             rowGap: verticalScale(5),
             columnGap: horizontalScale(10),
           }}

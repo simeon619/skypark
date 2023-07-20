@@ -18,38 +18,14 @@ const ImageViewer = ({ images, initialIndex = 0, onClose }: Props) => {
   const [index, setIndex] = useState(initialIndex);
   const [mounted, setMounted] = useState(false);
   const { bottom } = useSafeAreaInsets();
-  let endAncestor;
-  let endNode;
+
   useEffect(() => {
     setMounted(true);
   }, []);
 
   return (
     <View style={{ flex: 1 }}>
-      {/*<Gallery*/}
-      {/*  data={images}*/}
-      {/*  initialIndex={initialIndex}*/}
-      {/*  keyExtractor={(uri, i) => uri.uri}*/}
-      {/*  onIndexChange={(index) => setIndex(index)}*/}
-      {/*  renderItem={({ item, setImageDimensions }) => (*/}
-      {/*    <Image*/}
-      {/*      source={item.uri}*/}
-      {/*      contentFit="contain"*/}
-      {/*      style={StyleSheet.absoluteFillObject}*/}
-      {/*      onLoad={({ source: { width, height } }) =>*/}
-      {/*        setImageDimensions({*/}
-      {/*          width,*/}
-      {/*          height,*/}
-      {/*        })*/}
-      {/*      }*/}
-      {/*    />*/}
-      {/*  )}*/}
-      {/*  onSwipeToClose={onClose}*/}
-      {/*  numToRender={1}*/}
-      {/*  doubleTapInterval={250}*/}
-      {/*  pinchEnabled={true}*/}
-      {/*  onTap={() => setInfoVisible((v) => !v)}*/}
-      {/*/>*/}
+
       {infoVisible && (
         <Animated.View
           entering={mounted ? FadeInDown.duration(0) : undefined}

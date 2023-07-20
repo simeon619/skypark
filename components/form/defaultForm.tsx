@@ -1,4 +1,3 @@
-import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import { AntDesign } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
@@ -48,12 +47,6 @@ const DefaultForm = () => {
   const [value, setValue] = useState<string>();
   const [isFocus, setIsFocus] = useState(false);
 
-  const pickPreetyGallery = async () => {
-    const response = await MultipleImagePicker?.openPicker({
-      allowedAlbumCloudShared: true,
-      usedCameraButton: true,
-    });
-  };
   const pickGallery = async () => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -131,6 +124,7 @@ const DefaultForm = () => {
             // borderTopColor: "#0003",
             // borderTopWidth: 1,
             paddingVertical: moderateScale(10),
+
             backgroundColor: '#0000',
           },
           hideForm,
@@ -138,11 +132,12 @@ const DefaultForm = () => {
       >
         <View
           style={{
-            borderTopColor: '#0003',
+            borderTopColor: '#0002',
             borderTopWidth: 1,
-            borderBottomColor: '#0003',
+            borderBottomColor: '#0002',
             borderBottomWidth: 1,
             paddingVertical: verticalScale(10),
+            marginHorizontal: horizontalScale(10),
           }}
         >
           <TouchableOpacity
@@ -221,6 +216,7 @@ const DefaultForm = () => {
           style={{
             backgroundColor: 'white',
             paddingVertical: verticalScale(16),
+            paddingHorizontal: horizontalScale(10),
           }}
         >
           <Dropdown
@@ -277,6 +273,7 @@ const DefaultForm = () => {
             paddingHorizontal: horizontalScale(10),
             paddingVertical: verticalScale(5),
             borderRadius: moderateScale(50),
+            marginHorizontal: horizontalScale(10),
           }}
         >
           <TextRegular
@@ -288,7 +285,10 @@ const DefaultForm = () => {
             Valider
           </TextRegular>
         </TouchableOpacity>
-        <TouchableOpacity style={{ paddingVertical: verticalScale(10) }} onPress={() => {}}>
+        <TouchableOpacity
+          style={{ paddingVertical: verticalScale(10), marginHorizontal: horizontalScale(10) }}
+          onPress={() => {}}
+        >
           <TextRegular
             style={{
               color: primaryColour,

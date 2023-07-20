@@ -1,21 +1,21 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { useRootNavigationState } from 'expo-router';
+import { useRootNavigationState, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
 import { Dimensions, useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { horizontalScale, moderateScale } from '../../Utilis/metrics';
 import { View } from '../../components/Themed';
-import TabPageItem from '../../components/utilis/TabPageItem';
-import useToggleStore from '../../store/preference';
-import Neighbor from '../pagePost/Neighbor';
-import CieGestion from '../pagePost/CieGestion';
 import HeaderHome from '../../components/utilis/HeaderHome';
+import TabPageItem from '../../components/utilis/TabPageItem';
 import Colors from '../../constants/Colors';
+import useToggleStore from '../../store/preference';
+import CieGestion from '../pagePost/CieGestion';
+import Neighbor from '../pagePost/Neighbor';
 
 const home = () => {
   const navigationState = useRootNavigationState();
-
+  const route = useRouter();
   useEffect(() => {
     if (navigationState?.key) {
       // route.replace('register/Login');
@@ -36,7 +36,7 @@ const home = () => {
       <HeaderHome />
       <View style={{ flex: 1, paddingHorizontal: horizontalScale(10) }}>
         <Tab.Navigator
-          initialRouteName="Buildind"
+          initialRouteName="Tous les voisins"
           backBehavior="order"
           initialLayout={{
             width: Dimensions.get('window').width,
@@ -56,7 +56,7 @@ const home = () => {
               alignItems: 'flex-start',
             },
             tabBarLabelStyle: {
-              fontSize: 80,
+              fontSize: moderateScale(80),
               height: moderateScale(7),
               fontFamily: 'Thin',
               textTransform: 'capitalize',
